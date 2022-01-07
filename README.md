@@ -35,3 +35,5 @@
     think-template 应为比较熟悉文档是中文的方便使用
 # 跨站点登陆问题 
     例如 www.d2wd.com,bbs.d2wd.com使用redis存储session来实现一站式登陆
+# UI组件库打算自行开发 
+    好看的ui 可以直接抄 不太懂npm+nodejs的方案 不需要那么多东西 https://ant.design
