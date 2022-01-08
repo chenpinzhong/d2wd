@@ -97,13 +97,11 @@
             /*内容数据*/
             #content .content_rows{
                 display: flex;
-                flex-flow: row wrap;
             }
             #content .content_rows .main_menu{
-                display: flex;
                 width: 320px;
                 border-right: 1px solid #f0f0f0;
-                height: calc(100vh - 60px);
+                height: calc(100vh - 64px);
             }
             .d2_menu_item_group{
                 width: 100%;
@@ -189,7 +187,11 @@
                 opacity: .67
             }
 
-
+            #content .content_rows .main_content {
+                width: calc(100vw - 320px);
+                border-right: 1px solid #f0f0f0;
+                height: calc(100vh - 64px);
+            }
         </style>
     </head>
     <body>
@@ -209,8 +211,6 @@
                 <div class="main_menu">
                     <ul class="d2_menu_item_group">
                         <div class="d2_menu_item_title" title="组件总览" style="color: #0a0a0a; font-size: 24px">组件总览</div>
-
-
                         <!--通用-->
                         <li class="d2_menu_item_group">
                             <div class="d2_menu_item_group_title" title="通用">通用</div>
@@ -228,7 +228,7 @@
                             </ul>
                         </li>
                         <!--布局-->
-                        <li class="d2_menu_item_group">
+                        <li style="display: none" class="d2_menu_item_group">
                             <div class="d2_menu_item_group_title" title="通用">通用</div>
                             <ul class="d2_menu_item_group">
                                 <li class="d2_menu_item d2_menu_item_selected">
@@ -245,7 +245,7 @@
                         </li>
 
                         <!--导航-->
-                        <li class="d2_menu_item_group">
+                        <li style="display: none" class="d2_menu_item_group">
                             <div class="d2_menu_item_group_title" title="通用">通用</div>
                             <ul class="d2_menu_item_group">
                                 <li class="d2_menu_item d2_menu_item_selected">
@@ -262,7 +262,7 @@
                         </li>
 
                         <!--反馈-->
-                        <li class="d2_menu_item_group">
+                        <li style="display: none" class="d2_menu_item_group">
                             <div class="d2_menu_item_group_title" title="通用">通用</div>
                             <ul class="d2_menu_item_group">
                                 <li class="d2_menu_item d2_menu_item_selected">
@@ -278,7 +278,7 @@
                             </ul>
                         </li>
                         <!--功能-->
-                        <li class="d2_menu_item_group">
+                        <li style="display: none" class="d2_menu_item_group">
                             <div class="d2_menu_item_group_title" title="通用">通用</div>
                             <ul class="d2_menu_item_group">
                                 <li class="d2_menu_item d2_menu_item_selected">
@@ -294,17 +294,12 @@
                             </ul>
                         </li>
 
-
-
                     </ul>
                 </div>
-                <div class="main_content">1</div>
+                <div class="main_content">
+                    <div>12333</div>
+                </div>
             </div>
         </div>
-
-
-
-
-
     </body>
 </html>
