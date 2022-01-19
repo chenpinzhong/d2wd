@@ -5,143 +5,7 @@
     <!--引入head部分数据-->
     {include file="base/header"/}
     <style>
-        .markdown{
-            padding-left: 10px;
-        }
-        .code_box {
-            position: relative;
-            display: inline-block;
-            width: 100%;
-            margin: 0 0 16px;
-            border: 1px solid #f0f0f0;
-            border-radius: 2px;
-            transition: all .2s
-        }
 
-        .code_box .code_box_title,.code_box .code_box_title a {
-            color: #000000d9;
-            background: #fff
-        }
-
-        .code_box,.code_box .code_box_demo {
-            background-color: #fff
-        }
-
-        .code_box .markdown pre {
-            margin: .5em 0;
-            padding: 6px 12px
-        }
-
-        .code_box .markdown pre code {
-            margin: 0;
-            background: #f5f5f5
-        }
-        .code_box_demo {
-            padding: 42px 24px 50px;
-            color: #000000d9;
-            border-bottom: 1px solid #f0f0f0
-        }
-
-        .d2_btn>span {
-            display: inline-block
-        }
-
-        .d2_btn_primary {
-            color: #fff;
-            border-color: var(--d2_primary_color);
-            background: var(--d2_primary_color);
-            text-shadow: 0 -1px 0 rgba(0,0,0,.12);
-            box-shadow: 0 2px #0000000b
-        }
-
-        .d2_btn_primary>a:only_child {
-            color: currentColor
-        }
-
-        .d2_btn_primary>a:only_child:after {
-            position: absolute;
-            inset: 0;
-            background: 0 0;
-            content: ""
-        }
-
-        .d2_btn_primary:hover,.d2_btn_primary:focus {
-            color: #fff;
-            border-color: var(--d2_primary_color_hover);
-            background: var(--d2_primary_color_hover)
-        }
-        .d2_btn {
-            line-height: 1.5715;
-            position: relative;
-            display: inline-block;
-            font-weight: 400;
-            white-space: nowrap;
-            text-align: center;
-            background-image: none;
-            border: 1px solid transparent;
-            box-shadow: 0 2px #00000004;
-            cursor: pointer;
-            transition: all .3s cubic-bezier(.645,.045,.355,1);
-            -webkit-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
-            user-select: none;
-            touch-action: manipulation;
-            height: 32px;
-            padding: 4px 15px;
-            font-size: 14px;
-            border-radius: 2px;
-            color: #000000d9;
-            border-color: #d9d9d9;
-            background: #fff
-        }
-        .d2_btn_primary{
-            color: #fff;
-            border-color: var(--d2_primary_color);
-            background: var(--d2_primary_color);
-            text-shadow: 0 -1px 0 rgb(0 0 0 / 12%);
-            box-shadow: 0 2px #0000000b;
-        }
-        .d2_btn_primary:hover,.d2_btn_primary:focus {
-            color: #fff;
-            border-color: var(--d2_primary_color_hover);
-            background: var(--d2_primary_color_hover)
-        }
-        .markdown h2,.markdown h3,.markdown h4,.markdown h5,.markdown h6 {
-            clear: both;
-            margin: 1.6em 0 .6em;
-            color: #000000d9;
-            font-weight: 500;
-            font-family: Avenir,-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica Neue,Arial,Noto Sans,sans-serif,apple color emoji,segoe ui emoji,Segoe UI Symbol,noto color emoji,sans-serif
-        }
-        .d2_btn>.d2icon {
-            line-height: 1
-        }
-        .d2_btn,.d2_btn:active,.d2_btn:focus {
-            outline: 0
-        }
-        [d2_btn_click=true]:after{
-            position: absolute;
-            inset: 0;
-            display: block;
-            opacity: 0.5;
-            border-radius: inherit;
-            box-shadow: 0 0 0 0 var(--d2_primary_color);
-            animation: fadeEffect 0.8s cubic-bezier(.08,.82,.17,1),waveEffect .3s cubic-bezier(.08,.82,.17,1);
-            animation-fill-mode: forwards;
-            content: "";
-            pointer-events: none;
-        }
-        @keyframes fadeEffect {
-            to {
-                opacity: 0
-            }
-        }
-        @keyframes waveEffect {
-            to {
-                box-shadow: 0 0 0 6px var(--d2_primary_color)
-            }
-        }
     </style>
     <!--代码展示-->
     <style>
@@ -199,26 +63,22 @@
                             代码演示
                             <span class="all_code_box_controls">
                                 <span role="img" aria-label="code" tabindex="-1" class="anticon anticon-code code-box-expand-trigger">
-                                    <svg viewBox="64 64 896 896" focusable="false" data-icon="code" width="1em" height="1em" fill="currentColor" aria-hidden="true">
-                                        <path d="M516 673c0 4.4 3.4 8 7.5 8h185c4.1 0 7.5-3.6 7.5-8v-48c0-4.4-3.4-8-7.5-8h-185c-4.1 0-7.5 3.6-7.5 8v48zm-194.9 6.1l192-161c3.8-3.2 3.8-9.1 0-12.3l-192-160.9A7.95 7.95 0 00308 351v62.7c0 2.4 1 4.6 2.9 6.1L420.7 512l-109.8 92.2a8.1 8.1 0 00-2.9 6.1V673c0 6.8 7.9 10.5 13.1 6.1zM880 112H144c-17.7 0-32 14.3-32 32v736c0 17.7 14.3 32 32 32h736c17.7 0 32-14.3 32-32V144c0-17.7-14.3-32-32-32zm-40 728H184V184h656v656z"></path></svg></span><span role="img" aria-label="bug" tabindex="-1" class="anticon anticon-bug code-box-expand-trigger"><svg viewBox="64 64 896 896" focusable="false" data-icon="bug" width="1em" height="1em" fill="currentColor" aria-hidden="true"><path d="M304 280h56c4.4 0 8-3.6 8-8 0-28.3 5.9-53.2 17.1-73.5 10.6-19.4 26-34.8 45.4-45.4C450.9 142 475.7 136 504 136h16c28.3 0 53.2 5.9 73.5 17.1 19.4 10.6 34.8 26 45.4 45.4C650 218.9 656 243.7 656 272c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8 0-40-8.8-76.7-25.9-108.1a184.31 184.31 0 00-74-74C596.7 72.8 560 64 520 64h-16c-40 0-76.7 8.8-108.1 25.9a184.31 184.31 0 00-74 74C304.8 195.3 296 232 296 272c0 4.4 3.6 8 8 8z"></path><path d="M940 512H792V412c76.8 0 139-62.2 139-139 0-4.4-3.6-8-8-8h-60c-4.4 0-8 3.6-8 8a63 63 0 01-63 63H232a63 63 0 01-63-63c0-4.4-3.6-8-8-8h-60c-4.4 0-8 3.6-8 8 0 76.8 62.2 139 139 139v100H84c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h148v96c0 6.5.2 13 .7 19.3C164.1 728.6 116 796.7 116 876c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8 0-44.2 23.9-82.9 59.6-103.7a273 273 0 0022.7 49c24.3 41.5 59 76.2 100.5 100.5S460.5 960 512 960s99.8-13.9 141.3-38.2a281.38 281.38 0 00123.2-149.5A120 120 0 01836 876c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8 0-79.3-48.1-147.4-116.7-176.7.4-6.4.7-12.8.7-19.3v-96h148c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM716 680c0 36.8-9.7 72-27.8 102.9-17.7 30.3-43 55.6-73.3 73.3C584 874.3 548.8 884 512 884s-72-9.7-102.9-27.8c-30.3-17.7-55.6-43-73.3-73.3A202.75 202.75 0 01308 680V412h408v268z"></path>
-                                    </svg>
                                 </span>
                             </span>
                         </h2>
                         <section class="code_box" id="button_demo_basic" data-scrollama-index="2">
                             <section class="code_box_demo">
-                                <button  v-button type="button"  class="d2_btn d2_btn_primary"  >
+                                <button type="button"  class="d2_btn d2_btn_primary"  >
                                     <span>基础按钮</span>
                                 </button>
-                                <!--v-on:click.stop="d2_btn_click($event)" @animationend="d2_btn_click_animationend"-->
-                                <button v-button type="button"  class="d2_btn">
+                                <button type="button"  class="d2_btn">
                                     <span>默认按钮</span>{{message}}
                                 </button>
-                                <button v-button type="button" class="d2_btn d2_btn_dashed" >
+                                <button type="button" class="d2_btn d2_btn_dashed" >
                                     <span>虚线按钮</span>
                                 </button>
                                 <br>
-                                <button v-button type="button" class="d2_btn d2_btn_text" >
+                                <button type="button" class="d2_btn d2_btn_text" >
                                     <span>文本按钮</span>
                                 </button>
                                 <button type="button" class="d2_btn d2_btn_link">
@@ -233,74 +93,7 @@
     </div>
 </body>
 <script type="module">
-
-    function d2_btn_click(e){
-        let target=e.currentTarget;//得到当前元素
-        if(typeof(target.attributes['d2_btn_click'])=="undefined"){
-            target.setAttribute('d2_btn_click',"false")
-        }
-        if(target.attributes['d2_btn_click']['value']=="true"){
-            target.attributes['d2_btn_click']['value']="false"
-        }else{
-            target.attributes['d2_btn_click']['value']="true"
-        }
-    }
-    function d2_btn_click_animationend(e){
-        let target=e.currentTarget;//得到当前元素
-        if(typeof(target.attributes['d2_btn_click'])=="undefined"){
-            target.setAttribute('d2_btn_click',"false")
-        }
-        target.setAttribute('d2_btn_click',"false")
-    }
-
-    /*
-    //按钮的触发动画
-    d2_btn_click=function(e){
-        let target=e.currentTarget;//得到当前元素
-        if(typeof(target.attributes['d2_btn_click'])=="undefined"){
-            target.setAttribute('d2_btn_click',"false")
-        }
-        if(target.attributes['d2_btn_click']['value']=="true"){
-            target.attributes['d2_btn_click']['value']="false"
-        }else{
-            target.attributes['d2_btn_click']['value']="true"
-        }
-    }
-    //结束动画
-    d2_btn_click_animationend=function(e){
-        let target=e.currentTarget;//得到当前元素
-        if(typeof(target.attributes['d2_btn_click'])=="undefined"){
-            target.setAttribute('d2_btn_click',"false")
-        }
-        target.setAttribute('d2_btn_click',"false")
-    }
-    */
-    Vue.directive('button',{
-        bind: function (el){
-            let self = this;
-            let class_string=el.getAttribute('class');
-            let class_array=class_string.split(" ");
-            //满足按钮事件绑定
-            if(Number.isInteger(class_array.indexOf('d2_btn'))){
-                el.addEventListener('click',d2_btn_click)
-                el.addEventListener('animationend',d2_btn_click_animationend)
-            }
-        },
-    })
-
-    let app = new Vue({
-        el: '.main_container',
-        data: {
-            message: 'Hello Vue!'
-        },
-        mounted(){
-            //let self = this;
-        },
-        methods:{
-
-        }
-    })
-
-
+    button_com.el='button.d2_btn';
+    com.load(button_com)
 </script>
 </html>
