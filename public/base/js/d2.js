@@ -1,4 +1,4 @@
-
+//组件代理
 const com={
     //代理方法
     handler:{
@@ -9,7 +9,6 @@ const com={
             if('methods' in target && prop in target.methods){
                  return target.methods[prop];
             }
-
             return '未定义方法:'+prop;
         }
     },
@@ -30,9 +29,9 @@ const com={
         }
         return com;
     }
-}
+};
 
-//按钮组件
+//按钮组件定义
 const button_com = {
     //绑定对象
     name: 'button',
@@ -40,47 +39,64 @@ const button_com = {
     el: '',
     //绑定方法
     bind: {
-        //绑定按钮的方法
-        button: function (e) {
+        //绑定的click事件
+        click:function (e){
             let btn = document.querySelectorAll(e.el);
             btn.forEach(function (dom, index, arr) {
-                dom.addEventListener('click', e.d2_btn_click)
-                dom.addEventListener('animationend', e.d2_btn_click_animationend)
+                dom.addEventListener('click', e.click)
+            })
+        },
+        //绑定的动画事件
+        animation: function (e) {
+            let btn = document.querySelectorAll(e.el);
+            btn.forEach(function (dom, index, arr) {
+                //注册动画开始结束处理事件
+                dom.addEventListener('click', e.click_animation_start)
+                dom.addEventListener('animationend', e.click_animation_end)
             })
         }
     },
     //移除绑定
     remove_bind: {
-        //绑定按钮的方法
-        button: function (e) {
+        //移除绑定click事件
+        click:function (e){
             let btn = document.querySelectorAll(e.el);
             btn.forEach(function (dom, index, arr) {
-                dom.removeEventListener('click', e.d2_btn_click)
-                dom.removeEventListener('animationend', e.d2_btn_click_animationend)
+                dom.removeEventListener('click', e.click)
+            })
+        },
+        //移除绑定的动画事件
+        animation: function (e) {
+            let btn = document.querySelectorAll(e.el);
+            btn.forEach(function (dom, index, arr) {
+                dom.removeEventListener('click', e.click_animation_start)
+                dom.removeEventListener('animationend', e.click_animation_end)
             })
         }
     },
     //事件列表
     methods: {
+        //定义一个空事件
+        click:function (){},
         //按钮点击事件
-        d2_btn_click: function (e) {
+        click_animation_start: function (e) {
             let target = e.currentTarget;//得到当前元素
-            if (typeof (target.attributes['d2_btn_click']) == "undefined") {
-                target.setAttribute('d2_btn_click', "false")
+            if (typeof (target.attributes['ui_btn_click']) == "undefined") {
+                target.setAttribute('ui_btn_click', "false")
             }
-            if (target.attributes['d2_btn_click']['value'] == "true") {
-                target.attributes['d2_btn_click']['value'] = "false"
+            if (target.attributes['ui_btn_click']['value'] == "true") {
+                target.attributes['ui_btn_click']['value'] = "false"
             } else {
-                target.attributes['d2_btn_click']['value'] = "true"
+                target.attributes['ui_btn_click']['value'] = "true"
             }
         },
         //按钮动画播放结束
-        d2_btn_click_animationend: function (e) {
+        click_animation_end: function (e) {
             let target = e.currentTarget;//得到当前元素
-            if (typeof (target.attributes['d2_btn_click']) == "undefined") {
-                target.setAttribute('d2_btn_click', "false")
+            if (typeof (target.attributes['ui_btn_click']) == "undefined") {
+                target.setAttribute('ui_btn_click', "false")
             }
-            target.setAttribute('d2_btn_click', "false")
+            target.setAttribute('ui_btn_click', "false")
         }
     },
 };

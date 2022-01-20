@@ -4,16 +4,39 @@
     <title>UI框架-按钮</title>
     <!--引入head部分数据-->
     {include file="base/header"/}
-    <style>
+    <link rel="stylesheet" type="text/css" href="/base/extend/codemirror-5.65.0/lib/codemirror.css">
+    <link rel="stylesheet" type="text/css" href="/base/extend/codemirror-5.65.0/theme/ttcn.css">
 
-    </style>
+    <script charset="utf-8" src="/base/extend/codemirror-5.65.0/lib/codemirror.js"></script>
+    <script charset="utf-8" src="/base/extend/codemirror-5.65.0/mode/xml/xml.js"></script>
+    <script charset="utf-8" src="/base/extend/codemirror-5.65.0/mode/javascript/javascript.js"></script>
+    <script charset="utf-8" src="/base/extend/codemirror-5.65.0/mode/css/css.js"></script>
+    <script charset="utf-8" src="/base/extend/codemirror-5.65.0/mode/htmlmixed/htmlmixed.js"></script>
+
     <!--代码展示-->
     <style>
-        [id^="button_demo_basic"] .d2_btn {
+        .code_container{
+            border: 1px #ccc solid;
+            margin-top: 20px;
+        }
+        .code_container .title{
+            height: 36px;
+            border-bottom: 1px solid #ccc;
+            line-height: 36px;
+            padding-left: 10px;
+        }
+        .code_container .lable{
+            height: 24px;
+            line-height: 24px;
+            padding-left: 10px;
+            background-color: #f7f7f7;
+        }
+
+        [id^="button_demo_basic"] .ui_btn {
             margin-right: 8px;
             margin-bottom: 12px;
         }
-        [id^="button_demo_basic"] .d2_btn_rtl {
+        [id^="button_demo_basic"] .ui_btn_rtl {
             margin-right: 0;
             margin-left: 8px;
         }
@@ -68,22 +91,140 @@
                         </h2>
                         <section class="code_box" id="button_demo_basic" data-scrollama-index="2">
                             <section class="code_box_demo">
-                                <button type="button"  class="d2_btn d2_btn_primary"  >
-                                    <span>基础按钮</span>
-                                </button>
-                                <button type="button"  class="d2_btn">
-                                    <span>默认按钮</span>{{message}}
-                                </button>
-                                <button type="button" class="d2_btn d2_btn_dashed" >
-                                    <span>虚线按钮</span>
-                                </button>
-                                <br>
-                                <button type="button" class="d2_btn d2_btn_text" >
-                                    <span>文本按钮</span>
-                                </button>
-                                <button type="button" class="d2_btn d2_btn_link">
-                                    <span>连接按钮</span>
-                                </button>
+                                <button type="button" class="ui_btn ui_btn_primary"><span>基础按钮</span></button>
+                                <button type="button" class="ui_btn"><span>默认按钮</span></button>
+                                <button type="button" class="ui_btn ui_btn_dashed"><span>虚线按钮</span></button>
+                                <br/>
+                                <button type="button" class="ui_btn ui_btn_text" ><span>文本按钮</span></button>
+                                <button type="button" class="ui_btn ui_btn_link"><span>连接按钮</span></button>
+                                <div class="code_container">
+                                    <div class="title">简单使用组件</div>
+                                    <div class="lable">HTML</div>
+                                    <textarea type="code" data-mode="text/html">
+<button type="button" class="ui_btn ui_btn_primary"><span>基础按钮</span></button>
+<button type="button" class="ui_btn"><span>默认按钮</span></button>
+<button type="button" class="ui_btn ui_btn_dashed"><span>虚线按钮</span></button>
+<br/>
+<button type="button" class="ui_btn ui_btn_text" ><span>文本按钮</span></button>
+<button type="button" class="ui_btn ui_btn_link"><span>连接按钮</span></button></textarea>
+                                    <div class="lable">JavaScript</div>
+                                    <textarea type="code" data-mode="text/javascript">
+button_com.el='button.ui_btn';//按钮组件的选择器
+//定义的click事件
+button_com.click=function (e){
+    console.log('触发click事件');
+}
+//加载组件
+com.load(button_com);</textarea>
+                                </div>
+                                <!--不显示这个元素-->
+                                <div class="code_container hidden" style="display: none">
+                                    <div class="title">底层逻辑</div>
+                                    <div class="lable">JavaScript->组件实现原理</div>
+                                    <textarea type="code" data-mode="text/javascript">
+//组件代理
+const com={
+    //代理方法
+    handler:{
+        get: function(target, prop, receiver) {
+            //直接返回
+            if(prop in target)return target[prop]
+            //访问事件列表
+            if('methods' in target && prop in target.methods){
+                 return target.methods[prop];
+            }
+            return '未定义方法:'+prop;
+        }
+    },
+    //加载组件
+    load:function(load_com){
+        let com=new Proxy(load_com,this.handler);
+        //先执行移除绑定
+        for (let fun in com.remove_bind) {
+            if (typeof (com.remove_bind[fun]) == 'function') {
+                com.remove_bind[fun](com);
+            }
+        }
+        //自动绑定方法
+        for (let fun in com.bind) {
+            if (typeof (com.bind[fun]) == 'function') {
+                com.bind[fun](com);
+            }
+        }
+        return com;
+    }
+};
+
+//按钮组件定义
+const button_com = {
+    //绑定对象
+    name: 'button',
+    //绑定对象
+    el: '',
+    //绑定方法
+    bind: {
+        //绑定的click事件
+        click:function (e){
+            let btn = document.querySelectorAll(e.el);
+            btn.forEach(function (dom, index, arr) {
+                dom.addEventListener('click', e.click)
+            })
+        },
+        //绑定的动画事件
+        animation: function (e) {
+            let btn = document.querySelectorAll(e.el);
+            btn.forEach(function (dom, index, arr) {
+                //注册动画开始结束处理事件
+                dom.addEventListener('click', e.click_animation_start)
+                dom.addEventListener('animationend', e.click_animation_end)
+            })
+        }
+    },
+    //移除绑定
+    remove_bind: {
+        //移除绑定click事件
+        click:function (e){
+            let btn = document.querySelectorAll(e.el);
+            btn.forEach(function (dom, index, arr) {
+                dom.removeEventListener('click', e.click)
+            })
+        },
+        //移除绑定的动画事件
+        animation: function (e) {
+            let btn = document.querySelectorAll(e.el);
+            btn.forEach(function (dom, index, arr) {
+                dom.removeEventListener('click', e.click_animation_start)
+                dom.removeEventListener('animationend', e.click_animation_end)
+            })
+        }
+    },
+    //事件列表
+    methods: {
+        //定义一个空事件
+        click:function (){},
+        //按钮点击事件
+        click_animation_start: function (e) {
+            let target = e.currentTarget;//得到当前元素
+            if (typeof (target.attributes['ui_btn_click']) == "undefined") {
+                target.setAttribute('ui_btn_click', "false")
+            }
+            if (target.attributes['ui_btn_click']['value'] == "true") {
+                target.attributes['ui_btn_click']['value'] = "false"
+            } else {
+                target.attributes['ui_btn_click']['value'] = "true"
+            }
+        },
+        //按钮动画播放结束
+        click_animation_end: function (e) {
+            let target = e.currentTarget;//得到当前元素
+            if (typeof (target.attributes['ui_btn_click']) == "undefined") {
+                target.setAttribute('ui_btn_click', "false")
+            }
+            target.setAttribute('ui_btn_click', "false")
+        }
+    },
+};</textarea>
+                                </div>
                             </section>
                         </section>
                     </section>
@@ -93,7 +234,69 @@
     </div>
 </body>
 <script type="module">
-    button_com.el='button.d2_btn';
+    button_com.el='button.ui_btn';//按钮组件的选择器
+    //定义的click事件
+    button_com.click=function (e){
+        console.log('触发click事件')
+    }
+    //加载组件
     com.load(button_com)
 </script>
+<script type="module">
+    let code_container_list = document.querySelectorAll(".code_container");
+    code_container_list.forEach(function(code_container,index){
+        let code_editor_list=code_container.querySelectorAll("textarea[type='code']")
+        code_editor_list.forEach(function(code_editor,index){
+            let mode=code_editor.getAttribute('data-mode');
+            let mode_spec={};//默认
+            if(mode=='text/javascript'){
+                mode_spec={
+                    mode:"text/javascript",
+                    //mode:"htmlmixed",
+                    theme:'ttcn',
+                    readOnly: false,//只读
+                    tabSize: 4, // 制表符
+                    indentUnit: 2, // 缩进位数
+                    lineNumbers: true,//显示行数
+                    ineWiseCopyCut: true,
+                    viewportMargin: 1000,//每次加载1000行
+                }
+            }
+            if(mode=='text/html'){
+                mode_spec={
+                    mode: "text/html",
+                    theme:'ttcn',
+                    readOnly: false,//只读
+                    tabSize: 4, // 制表符
+                    indentUnit: 2, // 缩进位数
+                    lineNumbers: true,//显示行数
+                    ineWiseCopyCut: true,
+                    viewportMargin: 1000,//每次加载1000行
+                };
+            }
+            if(mode=='text/css'){
+                mode_spec={
+                    mode: "text/css",
+                    theme:'ttcn',
+                    readOnly: false,//只读
+                    tabSize: 4, // 制表符
+                    indentUnit: 2, // 缩进位数
+                    lineNumbers: true,//显示行数
+                    ineWiseCopyCut: true,
+                    viewportMargin: 1000,//每次加载1000行
+                };
+            }
+            let editor = CodeMirror.fromTextArea(code_editor, mode_spec);
+            //自动计算贷款框的高度
+            let code_height=code_container.querySelector(".CodeMirror .CodeMirror-scroll .CodeMirror-sizer").scrollHeight;
+            if(code_height>300){
+                editor.setSize('auto','300px');
+            }else{
+                editor.setSize('auto',(code_height+20)+'px');
+            }
+        })
+    })
+
+</script>
+
 </html>
