@@ -1,0 +1,100 @@
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>UI框架-输入框</title>
+    <!--引入head部分数据-->
+    {include file="base/header"/}
+    <link rel="stylesheet" type="text/css" href="/base/extend/codemirror-5.65.0/lib/codemirror.css">
+    <link rel="stylesheet" type="text/css" href="/base/extend/codemirror-5.65.0/theme/ttcn.css">
+
+    <script charset="utf-8" src="/base/extend/codemirror-5.65.0/lib/codemirror.js"></script>
+    <script charset="utf-8" src="/base/extend/codemirror-5.65.0/mode/xml/xml.js"></script>
+    <script charset="utf-8" src="/base/extend/codemirror-5.65.0/mode/javascript/javascript.js"></script>
+    <script charset="utf-8" src="/base/extend/codemirror-5.65.0/mode/css/css.js"></script>
+    <script charset="utf-8" src="/base/extend/codemirror-5.65.0/mode/htmlmixed/htmlmixed.js"></script>
+    <style>
+    </style>
+    <!--代码展示-->
+    <style>
+        .code_container{
+            border: 1px #ccc solid;
+            margin-top: 20px;
+        }
+        .code_container .title{
+            height: 36px;
+            border-bottom: 1px solid #ccc;
+            line-height: 36px;
+            padding-left: 10px;
+        }
+        .code_container .lable{
+            height: 24px;
+            line-height: 24px;
+            padding-left: 10px;
+            background-color: #f7f7f7;
+        }
+
+
+    </style>
+</head>
+<body>
+    <!--页面 top部分代码-->
+    {include file="base/top"/}
+    <!--页面 内容部分-->
+    <div id="content">
+        <div class="content_rows">
+            {include file="base/left"/}
+            <!--右侧内容-->
+            <div class="main_content">
+                <!--内容主体-->
+                <section class="main_container">
+                    <section class="markdown">
+                        <section class="markdown">
+                            <h1>Input<span class="subtitle">输入框</span></h1>
+                            <section class="markdown">
+                                <p>通过鼠标或键盘输入内容，是最基础的表单域的包装。</p>
+                                <h2 id="何时使用" data-scrollama-index="0"><span>何时使用</span><a href="#何时使用" class="anchor">#</a></h2>
+                                <ul>
+                                    <li><p>需要用户输入表单域内容时。</p></li>
+                                    <li><p>提供组合型输入框，带搜索的输入框，还可以进行大小选择。</p></li>
+                                </ul>
+                            </section>
+                            <h2 data-scrollama-index="1">代码演示</h2>
+                        </section>
+                        <section class="code_box" id="button_demo_basic" data-scrollama-index="2">
+                            <section class="code_box_demo">
+                                <p>基础用法</p>
+                                <input placeholder="基础用法" type="text" class="ui_input" value="">
+                                <br/>
+                                <p>常用搜索用法</p>
+                                <div class="form">
+                                    <input placeholder="基础用法" type="text" class="ui_input base" value="">
+                                    <input placeholder="基础用法" type="text" class="ui_input base" value="">
+                                    <input placeholder="基础用法" type="password" class="ui_input base" value="123">
+                                </div>
+                                <div class="code_container">
+                                    <div class="title">简单使用组件</div>
+                                    <div class="lable">HTML</div>
+                                    <textarea type="code" data-mode="text/html"><p>基础用法</p>
+<input placeholder="基础用法" type="text" class="ui_input" value="">
+<br/>
+<p>常用搜索用法</p>
+<div class="form">
+    <input placeholder="基础用法" type="text" class="ui_input base" value="">
+    <input placeholder="基础用法" type="text" class="ui_input base" value="">
+    <input placeholder="基础用法" type="password" class="ui_input base" value="123">
+</div></textarea>
+                                    <div class="lable">JavaScript</div>
+                                    <textarea type="code" data-mode="text/javascript">不需要</textarea>
+                                </div>
+                            </section>
+                        </section>
+                    </section>
+                </section>
+            </div>
+        </div>
+    </div>
+</body>
+<script type="module">
+
+</script>
+</html>
