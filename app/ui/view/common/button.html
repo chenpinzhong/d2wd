@@ -243,59 +243,7 @@ const button_com = {
     com.load(button_com)
 </script>
 <script type="module">
-    let code_container_list = document.querySelectorAll(".code_container");
-    code_container_list.forEach(function(code_container,index){
-        let code_editor_list=code_container.querySelectorAll("textarea[type='code']")
-        code_editor_list.forEach(function(code_editor,index){
-            let mode=code_editor.getAttribute('data-mode');
-            let mode_spec={};//默认
-            if(mode=='text/javascript'){
-                mode_spec={
-                    mode:"text/javascript",
-                    //mode:"htmlmixed",
-                    theme:'ttcn',
-                    readOnly: false,//只读
-                    tabSize: 4, // 制表符
-                    indentUnit: 2, // 缩进位数
-                    lineNumbers: true,//显示行数
-                    ineWiseCopyCut: true,
-                    viewportMargin: 1000,//每次加载1000行
-                }
-            }
-            if(mode=='text/html'){
-                mode_spec={
-                    mode: "text/html",
-                    theme:'ttcn',
-                    readOnly: false,//只读
-                    tabSize: 4, // 制表符
-                    indentUnit: 2, // 缩进位数
-                    lineNumbers: true,//显示行数
-                    ineWiseCopyCut: true,
-                    viewportMargin: 1000,//每次加载1000行
-                };
-            }
-            if(mode=='text/css'){
-                mode_spec={
-                    mode: "text/css",
-                    theme:'ttcn',
-                    readOnly: false,//只读
-                    tabSize: 4, // 制表符
-                    indentUnit: 2, // 缩进位数
-                    lineNumbers: true,//显示行数
-                    ineWiseCopyCut: true,
-                    viewportMargin: 1000,//每次加载1000行
-                };
-            }
-            let editor = CodeMirror.fromTextArea(code_editor, mode_spec);
-            //自动计算贷款框的高度
-            let code_height=code_container.querySelector(".CodeMirror .CodeMirror-scroll .CodeMirror-sizer").scrollHeight;
-            if(code_height>300){
-                editor.setSize('auto','300px');
-            }else{
-                editor.setSize('auto',(code_height+20)+'px');
-            }
-        })
-    })
+
 
 </script>
 
