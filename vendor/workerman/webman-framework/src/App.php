@@ -132,36 +132,39 @@ class App
     {
         static $request_count = 0;
         if (++$request_count > static::$_maxRequestCount) {
-            static::tryToGracefulExit();
+            static::tryToGracefulExit();//试着退出
         }
 
         try {
-            static::$_request = $request;
-            static::$_connection = $connection;
-            $path = $request->path();
-            $key = $request->method() . $path;
-
+            static::$_request = $request;//请求对象
+            static::$_connection = $connection;//连接对象
+            $error_array=array();
+            $path = $request->path();//请求的路径
+            $key = $request->method() . $path;//请求的方式+路径
+            //判断请求的处理方式
             if (isset(static::$_callbacks[$key])) {
                 list($callback, $request->app, $request->controller, $request->action) = static::$_callbacks[$key];
                 static::send($connection, $callback($request), $request);
                 return null;
             }
-
+            echo 'findFile:'.$path.PHP_EOL;
             if (static::findFile($connection, $path, $key, $request)) {
                 return null;
             }
-            
+            echo 'findRoute:'.$path.PHP_EOL;
             if (static::findRoute($connection, $path, $key, $request)) {
                 return null;
             }
-
+            echo 'parseControllerAction:'.$path.PHP_EOL;
             $controller_and_action = static::parseControllerAction($path);
+
             if (!$controller_and_action || Route::hasDisableDefaultRoute()) {
                 $callback = static::getFallback();
                 $request->app = $request->controller = $request->action = '';
                 static::send($connection, $callback($request), $request);
                 return null;
             }
+            echo 'app:'.$path.PHP_EOL;
             $app = $controller_and_action['app'];
             $controller = $controller_and_action['controller'];
             $action = $controller_and_action['action'];
@@ -319,6 +322,55 @@ class App
             return true;
         }
         return false;
+    }
+
+    /**
+     * @param $connection
+     * @param $path
+     * @param $key
+     * @param $request
+     * @return bool
+     */
+    protected static function findView($connection, $path, $key, $request)
+    {
+        $public_dir = static::$_publicPath;
+        $file = \realpath("$public_dir/$path");
+        if (false === $file || false === \is_file($file)) {
+            return false;
+        }
+
+        // Security check
+        if (strpos($file, $public_dir) !== 0) {
+            static::send($connection, new Response(400), $request);
+            return true;
+        }
+        if (\pathinfo($file, PATHINFO_EXTENSION) === 'php') {
+            if (!static::$_supportPHPFiles) {
+                return false;
+            }
+            static::$_callbacks[$key] = [function ($request) use ($file) {
+                return static::execPhpFile($file);
+            }, '', '', ''];
+            list($callback, $request->app, $request->controller, $request->action) = static::$_callbacks[$key];
+            static::send($connection, static::execPhpFile($file), $request);
+            return true;
+        }
+
+        if (!static::$_supportStaticFiles) {
+            return false;
+        }
+
+        static::$_callbacks[$key] = [static::getCallback('__static__', function ($request) use ($file) {
+            \clearstatcache(true, $file);
+            if (!\is_file($file)) {
+                $callback = static::getFallback();
+                return $callback($request);
+            }
+            return (new Response())->file($file);
+        }, null, false), '', '', ''];
+        list($callback, $request->app, $request->controller, $request->action) = static::$_callbacks[$key];
+        static::send($connection, $callback($request), $request);
+        return true;
     }
 
 

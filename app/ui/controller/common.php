@@ -9,4 +9,7 @@ class common{
     public function input(Request $request){
         return view('common/input', []);
     }
+    public function select(Request $request){
+        return view('common/select', []);
+    }
 }

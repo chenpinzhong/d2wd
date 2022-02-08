@@ -1,7 +1,7 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>UI框架-输入框</title>
+    <title>UI框架-选择框</title>
     <!--引入head部分数据-->
     {include file="base/header"/}
     <link rel="stylesheet" type="text/css" href="/base/extend/codemirror-5.65.0/lib/codemirror.css">
@@ -50,21 +50,33 @@
                 <section class="main_container">
                     <section class="markdown">
                         <section class="markdown">
-                            <h1>Input<span class="subtitle">输入框</span></h1>
+                            <h1>Select<span class="subtitle">选择器</span></h1>
                             <section class="markdown">
-                                <p>通过鼠标或键盘输入内容，是最基础的表单域的包装。</p>
+                                <p>下拉选择器。</p>
                                 <h2 id="何时使用" data-scrollama-index="0"><span>何时使用</span><a href="#何时使用" class="anchor">#</a></h2>
                                 <ul>
-                                    <li><p>需要用户输入表单域内容时。</p></li>
-                                    <li><p>提供组合型输入框，带搜索的输入框，还可以进行大小选择。</p></li>
+                                    <li><p>弹出一个下拉菜单给用户选择操作，用于代替原生的选择器，或者需要一个更优雅的多选器时。</p></li>
+                                    <li><p>当选项少时（少于 5 项），建议直接将选项平铺，使用 Radio 是更好的选择。</p></li>
                                 </ul>
                             </section>
                             <h2 data-scrollama-index="1">代码演示</h2>
                         </section>
                         <section class="code_box" id="button_demo_basic" data-scrollama-index="2">
                             <section class="code_box_demo">
-                                <p>基础用法</p>
-                                <input placeholder="基础用法" type="text" class="ui_input" value="">
+                                <p>基础用法 单选框</p>
+                                <select class="select_common">
+                                    <option value="jack">Jack</option>
+                                    <option value="lucy">Lucy</option>
+                                    <option value="disabled" disabled>Disabled</option>
+                                    <option value="1">1</option>
+                                </select>
+                                <p>基础用法 多选框</p>
+                                <select class="select_multiple">
+                                    <option value="jack">Jack</option>
+                                    <option value="lucy">Lucy</option>
+                                    <option value="disabled" disabled>Disabled</option>
+                                    <option value="1">1</option>
+                                </select>
                                 <br/>
                                 <p>常用搜索用法</p>
                                 <div class="form">
@@ -75,15 +87,7 @@
                                 <div class="code_container">
                                     <div class="title">简单使用组件</div>
                                     <div class="lable">HTML</div>
-                                    <textarea type="code" data-mode="text/html"><p>基础用法</p>
-<input placeholder="基础用法" type="text" class="ui_input" value="">
-<br/>
-<p>常用搜索用法</p>
-<div class="form">
-    <input placeholder="基础用法" type="text" class="ui_input base" value="">
-    <input placeholder="基础用法" type="text" class="ui_input base" value="">
-    <input placeholder="基础用法" type="password" class="ui_input base" value="123">
-</div></textarea>
+                                    <textarea type="code" data-mode="text/html"></textarea>
                                     <div class="lable">JavaScript</div>
                                     <textarea type="code" data-mode="text/javascript">不需要</textarea>
                                 </div>
