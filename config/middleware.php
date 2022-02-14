@@ -12,4 +12,12 @@
  * @license   http://www.opensource.org/licenses/mit-license.php MIT License
  */
 
-return [];
+return [
+    //app ui中间件
+    'ui'=>[
+        app\ui\middleware\StaticFile::class,
+    ],
+    'index'=>[
+        app\index\middleware\StaticFile::class,
+    ],
+];

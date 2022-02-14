@@ -31,12 +31,10 @@ if ($timezone = config('app.default_timezone')) {
 }
 
 Worker::$onMasterReload = function (){
-    if (function_exists('opcache_get_status')) {
-        if ($status = opcache_get_status()) {
-            if (isset($status['scripts']) && $scripts = $status['scripts']) {
-                foreach (array_keys($scripts) as $file) {
-                    opcache_invalidate($file, true);
-                }
+    if (function_exists('opcache_get_status') && $status = opcache_get_status()) {
+        if (isset($status['scripts']) && $scripts = $status['scripts']) {
+            foreach (array_keys($scripts) as $file) {
+                opcache_invalidate($file, true);
             }
         }
     }
@@ -66,9 +64,13 @@ foreach ($property_map as $property) {
 $worker->onWorkerStart = function ($worker) {
     require_once base_path() . '/support/bootstrap.php';
     $app = new App($worker, Container::instance(), Log::channel('default'), app_path(), public_path());
+    //路由规则
     Route::load(config_path() . '/route.php');
-    Middleware::load(config('middleware', []));
+    //加载中间件
+    Middleware::load( config('middleware', []));
+    //加载静态中间件
     Middleware::load(['__static__' => config('static.middleware', [])]);
+    //http请求处理类
     Http::requestClass(Request::class);
     $worker->onMessage = [$app, 'onMessage'];
 };

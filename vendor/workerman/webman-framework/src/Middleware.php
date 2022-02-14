@@ -34,7 +34,7 @@ class Middleware
                     static::$_instances[$app_name][] = [App::container()->get($class_name), 'process'];
                 } else {
                     // @todo Log
-                    echo "middleware $class_name::process not exsits\n";
+                    echo "middleware $class_name::process not exits\n";
                 }
             }
         }

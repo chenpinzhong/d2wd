@@ -12,7 +12,7 @@
  * @license   http://www.opensource.org/licenses/mit-license.php MIT License
  */
 
-namespace app\index\middleware;
+namespace app\ui\middleware;
 
 use Webman\MiddlewareInterface;
 use Webman\Http\Response;
@@ -32,6 +32,7 @@ class StaticFile implements MiddlewareInterface
         }
         /** @var Response $response */
         $response = $next($request);
+        var_dump('ui中间件');
         // Add cross domain HTTP header
         /*$response->withHeaders([
             'Access-Control-Allow-Origin'      => '*',

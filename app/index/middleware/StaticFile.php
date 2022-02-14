@@ -26,11 +26,14 @@ class StaticFile implements MiddlewareInterface
 {
     public function process(Request $request, callable $next) : Response
     {
+        echo 'A4-------------------------'.PHP_EOL;
+        var_dump('$next',$next);
         // Access to files beginning with. Is prohibited
         if (strpos($request->path(), '/.') !== false) {
             return response('<h1>403 forbidden</h1>', 403);
         }
         /** @var Response $response */
+        var_dump('index中间件');
         $response = $next($request);
         // Add cross domain HTTP header
         /*$response->withHeaders([

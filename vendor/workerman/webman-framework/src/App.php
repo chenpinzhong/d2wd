@@ -132,45 +132,67 @@ class App
     {
         static $request_count = 0;
         if (++$request_count > static::$_maxRequestCount) {
-            static::tryToGracefulExit();//试着退出
+            static::tryToGracefulExit();
         }
 
         try {
-            static::$_request = $request;//请求对象
-            static::$_connection = $connection;//连接对象
-            $error_array=array();
-            $path = $request->path();//请求的路径
-            $key = $request->method() . $path;//请求的方式+路径
-            //判断请求的处理方式
+            static::$_request = $request;
+            static::$_connection = $connection;
+
+            $path = $request->path();
+            $key = $request->method().$path;
+            //模块/控制器/方法
+            $explode = \explode('/', $path);
+            $app = $controller = $action = 'index';
+
+            if (!empty($explode[1]))$app = $explode[1];
+            if (!empty($explode[2]))$controller = $explode[2];
+            if (!empty($explode[3]))$action = $explode[3];
+
+            //缓存方法
+            /*
             if (isset(static::$_callbacks[$key])) {
                 list($callback, $request->app, $request->controller, $request->action) = static::$_callbacks[$key];
                 static::send($connection, $callback($request), $request);
                 return null;
             }
-            echo 'findFile:'.$path.PHP_EOL;
+            */
             if (static::findFile($connection, $path, $key, $request)) {
                 return null;
             }
-            echo 'findRoute:'.$path.PHP_EOL;
+
             if (static::findRoute($connection, $path, $key, $request)) {
                 return null;
             }
-            echo 'parseControllerAction:'.$path.PHP_EOL;
             $controller_and_action = static::parseControllerAction($path);
-
             if (!$controller_and_action || Route::hasDisableDefaultRoute()) {
+                //如果控制器不存在 就直接访问视图文件
+                if (empty($controller_and_action)) {
+                    //判断视图文件是否存在
+                    $view_path = $app === '' ? \app_path() . '/view/' : \app_path(). "/$app/view/";
+                    $view_file=$view_path.'/'.$controller.'/'.$action.'.html';
+                    if(!$controller_and_action && file_exists($view_file)){
+                        $callback=function($path) use ($request,$app,$controller,$action){
+                            $explode = \explode('/', $path);
+                            $request->app=$app;
+                            return view($controller.'/'.$action, []);
+                        };
+                        static::send($connection, $callback($path), $request);
+                        return null;
+                    }
+                }
                 $callback = static::getFallback();
                 $request->app = $request->controller = $request->action = '';
                 static::send($connection, $callback($request), $request);
                 return null;
             }
-            echo 'app:'.$path.PHP_EOL;
             $app = $controller_and_action['app'];
             $controller = $controller_and_action['controller'];
             $action = $controller_and_action['action'];
             $callback = static::getCallback($app, [$controller_and_action['instance'], $action]);
             static::$_callbacks[$key] = [$callback, $app, $controller, $action];
             list($callback, $request->app, $request->controller, $request->action) = static::$_callbacks[$key];
+            //发送数据
             static::send($connection, $callback($request), $request);
         } catch (\Throwable $e) {
             static::send($connection, static::exceptionResponse($e, $request), $request);
@@ -233,7 +255,7 @@ class App
                     return $pipe($request, $carry);
                 };
             }, function ($request) use ($call, $args) {
-
+                echo 'a2-------------'.PHP_EOL;
                 try {
                     if ($args === null) {
                         $response = $call($request);
@@ -322,55 +344,6 @@ class App
             return true;
         }
         return false;
-    }
-
-    /**
-     * @param $connection
-     * @param $path
-     * @param $key
-     * @param $request
-     * @return bool
-     */
-    protected static function findView($connection, $path, $key, $request)
-    {
-        $public_dir = static::$_publicPath;
-        $file = \realpath("$public_dir/$path");
-        if (false === $file || false === \is_file($file)) {
-            return false;
-        }
-
-        // Security check
-        if (strpos($file, $public_dir) !== 0) {
-            static::send($connection, new Response(400), $request);
-            return true;
-        }
-        if (\pathinfo($file, PATHINFO_EXTENSION) === 'php') {
-            if (!static::$_supportPHPFiles) {
-                return false;
-            }
-            static::$_callbacks[$key] = [function ($request) use ($file) {
-                return static::execPhpFile($file);
-            }, '', '', ''];
-            list($callback, $request->app, $request->controller, $request->action) = static::$_callbacks[$key];
-            static::send($connection, static::execPhpFile($file), $request);
-            return true;
-        }
-
-        if (!static::$_supportStaticFiles) {
-            return false;
-        }
-
-        static::$_callbacks[$key] = [static::getCallback('__static__', function ($request) use ($file) {
-            \clearstatcache(true, $file);
-            if (!\is_file($file)) {
-                $callback = static::getFallback();
-                return $callback($request);
-            }
-            return (new Response())->file($file);
-        }, null, false), '', '', ''];
-        list($callback, $request->app, $request->controller, $request->action) = static::$_callbacks[$key];
-        static::send($connection, $callback($request), $request);
-        return true;
     }
 
 

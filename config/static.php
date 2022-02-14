@@ -18,6 +18,7 @@
 return [
     'enable'     => true,
     'middleware' => [     // Static file Middleware
-        //app\middleware\StaticFile::class,
+        //app\index\middleware\StaticFile::class,
+        //app\ui\middleware\StaticFile::class,
     ],
 ];
