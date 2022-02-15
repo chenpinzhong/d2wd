@@ -14,6 +14,7 @@
 
 namespace Webman;
 
+use DTS\eBaySDK\Trading\Types\VATRateType;
 use Workerman\Worker;
 use Workerman\Timer;
 use Workerman\Connection\TcpConnection;
@@ -99,6 +100,12 @@ class App
      */
     protected static $_gracefulStopTimer = null;
 
+
+    protected $app='';//模块
+    protected $controller='';//控制器
+    protected $action='';//方法
+
+
     /**
      * App constructor.
      * @param Worker $worker
@@ -141,13 +148,7 @@ class App
 
             $path = $request->path();
             $key = $request->method().$path;
-            //模块/控制器/方法
-            $explode = \explode('/', $path);
-            $app = $controller = $action = 'index';
 
-            if (!empty($explode[1]))$app = $explode[1];
-            if (!empty($explode[2]))$controller = $explode[2];
-            if (!empty($explode[3]))$action = $explode[3];
 
             //缓存方法
             /*
@@ -157,6 +158,13 @@ class App
                 return null;
             }
             */
+            //得到 模块/控制器/方法
+            $controller_and_action = static::parseControllerAction($path);
+            $app = $controller_and_action['app'];
+            $controller = $controller_and_action['controller'];
+            $action = $controller_and_action['action'];
+            $instance = $controller_and_action['instance'];
+
             if (static::findFile($connection, $path, $key, $request)) {
                 return null;
             }
@@ -164,34 +172,27 @@ class App
             if (static::findRoute($connection, $path, $key, $request)) {
                 return null;
             }
-            $controller_and_action = static::parseControllerAction($path);
-            if (!$controller_and_action || Route::hasDisableDefaultRoute()) {
+            if (empty($controller_and_action['action_real']) || Route::hasDisableDefaultRoute()) {
                 //如果控制器不存在 就直接访问视图文件
-                if (empty($controller_and_action)) {
+                if (empty($controller_and_action['action_real'])){
                     //判断视图文件是否存在
-                    $view_path = $app === '' ? \app_path() . '/view/' : \app_path(). "/$app/view/";
-                    $view_file=$view_path.'/'.$controller.'/'.$action.'.html';
-                    if(!$controller_and_action && file_exists($view_file)){
-                        $callback=function($path) use ($request,$app,$controller,$action){
-                            $explode = \explode('/', $path);
-                            $request->app=$app;
-                            return view($controller.'/'.$action, []);
-                        };
-                        static::send($connection, $callback($path), $request);
+                    $view_path = $this->app === '' ? \app_path() . '/view/' : \app_path(). "/$this->app/view/";
+                    $view_file=$view_path.'/'.$this->controller.'/'.$this->action.'.html';
+                    if(file_exists($view_file)){
+                        $callback = static::getCallback($app, $controller_and_action,true);
+                        static::$_callbacks[$key] = [$callback, $app, $controller, $action];
+                        static::send($connection, $callback($request), $request);
                         return null;
                     }
                 }
                 $callback = static::getFallback();
                 $request->app = $request->controller = $request->action = '';
+                static::$_callbacks[$key] = [$callback, $app, $controller, $action];
                 static::send($connection, $callback($request), $request);
                 return null;
             }
-            $app = $controller_and_action['app'];
-            $controller = $controller_and_action['controller'];
-            $action = $controller_and_action['action'];
-            $callback = static::getCallback($app, [$controller_and_action['instance'], $action]);
+            $callback = static::getCallback($app, [$instance, $action]);
             static::$_callbacks[$key] = [$callback, $app, $controller, $action];
-            list($callback, $request->app, $request->controller, $request->action) = static::$_callbacks[$key];
             //发送数据
             static::send($connection, $callback($request), $request);
         } catch (\Throwable $e) {
@@ -239,12 +240,13 @@ class App
     /**
      * @param $app
      * @param $call
+     * @param bool $is_view
      * @param null $args
      * @param bool $with_global_middleware
-     * @param RouteObject $route
+     * @param null $route
      * @return \Closure|mixed
      */
-    protected static function getCallback($app, $call, $args = null, $with_global_middleware = true, $route = null)
+    protected static function getCallback($app, $call,$is_view=false, $args = null, $with_global_middleware = true, $route = null)
     {
         $args = $args === null ? null : \array_values($args);
         $middleware = Middleware::getMiddleware($app, $with_global_middleware);
@@ -254,8 +256,15 @@ class App
                 return function ($request) use ($carry, $pipe) {
                     return $pipe($request, $carry);
                 };
-            }, function ($request) use ($call, $args) {
-                echo 'a2-------------'.PHP_EOL;
+            }, function ($request) use ($call, $args,$is_view) {
+                //如果是视图文件 就提前返回
+                if($is_view){
+                    $request->app=$call['app'];
+                    $request->controller=$call['controller'];
+                    $request->action=$call['action'];
+                    return view($call['controller'].'/'.$call['action']);
+                }
+
                 try {
                     if ($args === null) {
                         $response = $call($request);
@@ -417,25 +426,31 @@ class App
      * @param $path
      * @return array|bool
      */
-    protected static function parseControllerAction($path)
+    protected function parseControllerAction($path)
     {
         //模块/控制器/方法
         $explode = \explode('/', $path);
-        $app = $controller = $action = 'index';
-        if (!empty($explode[1]))$app = $explode[1];
-        if (!empty($explode[2]))$controller = $explode[2];
-        if (!empty($explode[3]))$action = $explode[3];
-        $controller_class = "app\\$app\\controller\\$controller";
-        if (static::loadController($controller_class) && \is_callable([$instance = static::$_container->get($controller_class), $action])) {
+        $this->app = $this->controller = $this->action = 'index';
+        if (!empty($explode[1]))$this->app = $explode[1];
+        if (!empty($explode[2]))$this->controller = $explode[2];
+        if (!empty($explode[3]))$this->action = $explode[3];
+
+        $controller_class = "app\\$this->app\\controller\\$this->controller";
+        $action_real='';
+        $instance='';
+        if (static::loadController($controller_class) && \is_callable([$instance = static::$_container->get($controller_class), $this->action])) {
             $controller_class = \get_class($instance);
-            return [
-                'app'        => $app,
-                'controller' => $controller_class,
-                'action'     => static::getRealMethod($controller_class, $action),
-                'instance'   => static::$_container->get($controller_class),
-            ];
+            $action_real=static::getRealMethod($controller_class, $this->action);
+            $instance=static::$_container->get($controller_class);
         }
-        return false;
+        return [
+            'app'               => $this->app,
+            'controller'        => $this->controller,
+            'action'            => $this->action,
+            'controller_class'  => $controller_class,
+            'action_real'       => $action_real,
+            'instance'          => $instance,
+        ];
     }
 
     /**

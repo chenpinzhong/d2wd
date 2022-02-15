@@ -32,7 +32,6 @@ class StaticFile implements MiddlewareInterface
         }
         /** @var Response $response */
         $response = $next($request);
-        var_dump('ui中间件');
         // Add cross domain HTTP header
         /*$response->withHeaders([
             'Access-Control-Allow-Origin'      => '*',

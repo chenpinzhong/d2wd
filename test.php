@@ -11,4 +11,8 @@ $message_2='ccc';
 $example = function ($arg) use ($message,$message_2) {
     var_dump($arg . ' ' . $message.'-'.$message_2);
 };
-$example("hello");
+function ($arg) {
+
+}
+var_dump(($example));
+
