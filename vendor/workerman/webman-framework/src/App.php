@@ -151,14 +151,12 @@ class App
 
 
             //缓存方法
-            /*
             if (isset(static::$_callbacks[$key])) {
                 list($callback, $request->app, $request->controller, $request->action) = static::$_callbacks[$key];
                 static::send($connection, $callback($request), $request);
                 return null;
             }
-            */
-            //得到 模块/控制器/方法
+            //解析请求路径得到 模块/控制器/方法
             $controller_and_action = static::parseControllerAction($path);
             $app = $controller_and_action['app'];
             $controller = $controller_and_action['controller'];
@@ -173,29 +171,35 @@ class App
                 return null;
             }
             if (empty($controller_and_action['action_real']) || Route::hasDisableDefaultRoute()) {
-                //如果控制器不存在 就直接访问视图文件
-                if (empty($controller_and_action['action_real'])){
-                    //判断视图文件是否存在
-                    $view_path = $this->app === '' ? \app_path() . '/view/' : \app_path(). "/$this->app/view/";
-                    $view_file=$view_path.'/'.$this->controller.'/'.$this->action.'.html';
-                    if(file_exists($view_file)){
-                        $callback = static::getCallback($app, $controller_and_action,true);
-                        static::$_callbacks[$key] = [$callback, $app, $controller, $action];
-                        static::send($connection, $callback($request), $request);
-                        return null;
-                    }
+                //判断视图文件是否存在
+                $view_path = $this->app === '' ? \app_path() . '/view/' : \app_path(). "/$this->app/view/";
+                $view_file=$view_path.'/'.$this->controller.'/'.$this->action.'.html';
+                if(file_exists($view_file)){
+                    //访问视图缓存
+                    $request->app=$controller_and_action['app'];
+                    $request->controller=$controller_and_action['controller'];
+                    $request->action=$controller_and_action['action'];
+                    $callback = static::getCallback($app, function ($request){
+                        return view($request->controller.'/'.$request->action);
+                    });
+                    static::$_callbacks[$key] = [$callback, $app, $controller, $action];
+                    static::send($connection, $callback($request), $request);
+                    return null;
+                }else{
+                    //404缓存
+                    $callback = static::getFallback();
+                    $request->app = $request->controller = $request->action = '';
+                    static::$_callbacks[$key] = [$callback, $app, $controller, $action];
+                    static::send($connection, $callback($request), $request);
+                    return null;
                 }
-                $callback = static::getFallback();
-                $request->app = $request->controller = $request->action = '';
-                static::$_callbacks[$key] = [$callback, $app, $controller, $action];
-                static::send($connection, $callback($request), $request);
-                return null;
             }
+            //正常调用控制器方法
             $callback = static::getCallback($app, [$instance, $action]);
             static::$_callbacks[$key] = [$callback, $app, $controller, $action];
-            //发送数据
             static::send($connection, $callback($request), $request);
         } catch (\Throwable $e) {
+            //调用错误
             static::send($connection, static::exceptionResponse($e, $request), $request);
         }
         return null;
@@ -246,7 +250,7 @@ class App
      * @param null $route
      * @return \Closure|mixed
      */
-    protected static function getCallback($app, $call,$is_view=false, $args = null, $with_global_middleware = true, $route = null)
+    protected static function getCallback($app, $call, $args = null, $with_global_middleware = true, $route = null)
     {
         $args = $args === null ? null : \array_values($args);
         $middleware = Middleware::getMiddleware($app, $with_global_middleware);
@@ -256,15 +260,10 @@ class App
                 return function ($request) use ($carry, $pipe) {
                     return $pipe($request, $carry);
                 };
-            }, function ($request) use ($call, $args,$is_view) {
-                //如果是视图文件 就提前返回
-                if($is_view){
-                    $request->app=$call['app'];
-                    $request->controller=$call['controller'];
-                    $request->action=$call['action'];
-                    return view($call['controller'].'/'.$call['action']);
-                }
-
+            }, function ($request) use ($call, $args) {
+                //如果是对象 就调用对象
+                if (is_scalar($call))return $call;
+                //调用控制器方法
                 try {
                     if ($args === null) {
                         $response = $call($request);
