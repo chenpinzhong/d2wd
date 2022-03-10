@@ -131,6 +131,7 @@ class App
     }
 
     /**
+     * 处理请求
      * @param TcpConnection $connection
      * @param Request $request
      * @return null
@@ -149,7 +150,6 @@ class App
             $path = $request->path();
             $key = $request->method().$path;
 
-
             //缓存方法
             if (isset(static::$_callbacks[$key])) {
                 list($callback, $request->app, $request->controller, $request->action) = static::$_callbacks[$key];
@@ -166,21 +166,20 @@ class App
             if (static::findFile($connection, $path, $key, $request)) {
                 return null;
             }
-
             if (static::findRoute($connection, $path, $key, $request)) {
                 return null;
             }
             if (empty($controller_and_action['action_real']) || Route::hasDisableDefaultRoute()) {
                 //判断视图文件是否存在
-                $view_path = $this->app === '' ? \app_path() . '/view/' : \app_path(). "/$this->app/view/";
-                $view_file=$view_path.'/'.$this->controller.'/'.$this->action.'.html';
+                $view_path = $app === '' ? \app_path() . '/view/' : \app_path(). "/$app/view/";
+                $view_file=$view_path.$controller.'/'.$action.'.html';
                 if(file_exists($view_file)){
                     //访问视图缓存
-                    $request->app=$controller_and_action['app'];
-                    $request->controller=$controller_and_action['controller'];
-                    $request->action=$controller_and_action['action'];
-                    $callback = static::getCallback($app, function ($request){
-                        return view($request->controller.'/'.$request->action);
+                    $callback = static::getCallback($app, function ($request) use($app,$controller,$action){
+                        $request->app=$app;
+                        $request->controller=$controller;
+                        $request->action=$action;
+                        return \view($request->controller.'/'.$request->action,[]);
                     });
                     static::$_callbacks[$key] = [$callback, $app, $controller, $action];
                     static::send($connection, $callback($request), $request);
@@ -429,23 +428,23 @@ class App
     {
         //模块/控制器/方法
         $explode = \explode('/', $path);
-        $this->app = $this->controller = $this->action = 'index';
-        if (!empty($explode[1]))$this->app = $explode[1];
-        if (!empty($explode[2]))$this->controller = $explode[2];
-        if (!empty($explode[3]))$this->action = $explode[3];
+        $app = $controller = $action = 'index';
+        if (!empty($explode[1]))$app = $explode[1];
+        if (!empty($explode[2]))$controller = $explode[2];
+        if (!empty($explode[3]))$action = $explode[3];
 
-        $controller_class = "app\\$this->app\\controller\\$this->controller";
+        $controller_class = "app\\$app\\controller\\$controller";
         $action_real='';
         $instance='';
-        if (static::loadController($controller_class) && \is_callable([$instance = static::$_container->get($controller_class), $this->action])) {
+        if (static::loadController($controller_class) && \is_callable([$instance = static::$_container->get($controller_class), $action])) {
             $controller_class = \get_class($instance);
             $action_real=static::getRealMethod($controller_class, $this->action);
             $instance=static::$_container->get($controller_class);
         }
         return [
-            'app'               => $this->app,
-            'controller'        => $this->controller,
-            'action'            => $this->action,
+            'app'               => $app,
+            'controller'        => $controller,
+            'action'            => $action,
             'controller_class'  => $controller_class,
             'action_real'       => $action_real,
             'instance'          => $instance,

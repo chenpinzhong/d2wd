@@ -100,3 +100,71 @@ const button_com = {
         }
     },
 };
+
+//选择框组件
+const select_com = {
+    //绑定对象
+    name: 'select',
+    //绑定对象
+    el: '',
+    //绑定方法
+    bind: {
+        //加载时的操作
+        load:function (e){
+            //对select 进行绑定事件
+            let select = document.querySelectorAll(e.el);
+            select.forEach(function(dom){
+                e.add_scroll_handle(dom.querySelector('.ui_select_dropdown'),e.scroll_handle)
+            })
+        },
+    },
+    //移除绑定
+    remove_bind: {
+        //加载时的操作
+        load:function (e){
+            //对select 移除绑定事件
+            let select = document.querySelectorAll(e.el);
+            select.forEach(function(dom){
+                e.remove_scroll_handle(dom.querySelector('.ui_select_dropdown'),e.scroll_handle)
+            })
+        },
+    },
+    //事件列表
+    methods: {
+        //添加滚动事件
+        add_scroll_handle:function (obj,scroll_handle){
+            if (obj.addEventListener)obj.addEventListener('DOMMouseScroll', scroll_handle, false)
+            obj.onmousewheel = scroll_handle
+        },
+        //移除绑定事件
+        remove_scroll_handle:function (obj,scroll_handle){
+            if (obj.addEventListener)obj.removeEventListener('DOMMouseScroll', scroll_handle, false)
+            obj.onmousewheel = null
+        },
+        //添加滚动事件处理
+        scroll_handle:function(e){
+            e.preventDefault();
+            e.stopPropagation();
+            let select_box=$(e.target).parents('.ui_select_dropdown');
+            let select_list=select_box.find('.ui_select_list');
+            let select_list_item=select_box.find('.ui_select_list .ui_select_item');
+            let scrollbar_box=select_box.find('.ui_select_dropdown_scrollbar');
+            let scrollbar_thumb=select_box.find('.ui_select_dropdown_scrollbar .ui_select_dropdown_scrollbar_thumb');
+            let box_height=select_box.height();//容器高度
+            let list_height=select_list.height();//列表高度
+            let item_height=select_list_item.height();//元素高度
+            let scrollbar_box_height=scrollbar_box.height();//滚动条容器高度
+            let scrollbar_height=scrollbar_thumb.height();//滚动条高度
+            if(e.wheelDelta<=0){
+                select_box[0].scrollTop+=item_height;
+            }else {
+                select_box[0].scrollTop-=item_height;
+            }
+            let true_scroll_top=select_box[0].scrollTop/(list_height-box_height);//得到当前滚动占比
+            console.log('true_scroll_top',true_scroll_top,'scrollbar_box_height',scrollbar_box_height,'scrollbar_height',scrollbar_height,'v',true_scroll_top*(scrollbar_box_height-scrollbar_height))
+            let new_top=true_scroll_top*(scrollbar_box_height-scrollbar_height);
+            scrollbar_thumb.css('top',new_top+'px');
+            return false;
+        },
+    },
+};

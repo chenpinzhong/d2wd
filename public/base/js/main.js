@@ -10,7 +10,7 @@ let main={
     parents:function (el,selector){
         let _this=this;
         let selector_array=selector.split(',');
-        let return_parent=[];
+        let return_parent=false;
         let parent=el.parentElement;
         selector_array.forEach(function (selector_string){
             let temp_str=selector_string;
@@ -26,9 +26,9 @@ let main={
                 if(return_parent.length>=1)return true;
                 //元素大于100层就跳出
                 if(index>=100)return false;
-                if(type=='id' && temp_str==parent.id)return_parent.push(parent);
-                if(type=='tag' && temp_str==parent.nodeName.toLowerCase())return_parent.push(parent);
-                if(type=='class' && parent.className.indexOf(temp_str)>=0)return_parent.push(parent);
+                if(type=='id' && temp_str==parent.id)return_parent=parent;
+                if(type=='tag' && temp_str==parent.nodeName.toLowerCase())return_parent=parent;
+                if(type=='class' && parent.className.indexOf(temp_str)>=0)return_parent=parent;
                 parent=parent.parentElement;
                 index+=1;
             }

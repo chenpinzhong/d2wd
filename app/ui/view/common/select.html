@@ -14,6 +14,97 @@
     <script charset="utf-8" src="/base/extend/codemirror-5.65.0/mode/css/css.js"></script>
     <script charset="utf-8" src="/base/extend/codemirror-5.65.0/mode/htmlmixed/htmlmixed.js"></script>
     <style>
+        .ui_select {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            color: #000000d9;
+            font-size: 14px;
+            font-variant: tabular-nums;
+            line-height: 1.5715;
+            list-style: none;
+            font-feature-settings: "tnum";
+            position: relative;
+            display: inline-block;
+            cursor: pointer;
+            position: relative;
+        }
+        .ui_select .ui_select_selector {
+            width: 100%;
+            height: 32px;
+            padding: 0 11px;
+            position: relative;
+            background-color: #fff;
+            border: 1px solid #d9d9d9;
+            border-radius: 2px;
+            transition: all .3s cubic-bezier(.645,.045,.355,1);
+        }
+        .ui_select_selection_search_input{
+            margin: 0;
+            padding: 0;
+            background: 0 0;
+            border: none;
+            outline: none;
+            appearance: none;
+            height: 30px;
+        }
+        .ui_select_dropdown {
+            margin: 0;
+            color: #000000d9;
+            list-style: none;
+            font-feature-settings: "tnum";
+            position: absolute;
+            top:38px;
+            z-index: 999;
+            height: 200px;
+            box-sizing: border-box;
+            padding: 4px 0;
+            overflow: hidden;
+            font-size: 14px;
+            font-variant: initial;
+            background-color: #fff;
+            border-radius: 2px;
+            outline: none;
+            width: 100%;
+            box-shadow: 0 3px 6px -4px #0000001f,0 6px 16px #00000014,0 9px 28px 8px #0000000d
+        }
+        .ui_select_dropdown .ui_select_list{
+            position: relative;
+        }
+        .ui_select_dropdown .ui_select_item {
+            display: block;
+            min-height: 32px;
+            padding: 5px 12px;
+            color: #000000d9;
+            font-weight: 400;
+            font-size: 14px;
+            line-height: 22px;
+            cursor: pointer;
+            transition: background .3s ease
+        }
+        .ui_select_dropdown .ui_select_item:hover {
+            background-color: #f5f5f5;
+        }
+        .ui_select_dropdown_scrollbar{
+            width: 8px;
+            bottom: 0px;
+            right: 0px;
+            top: 0px;
+            position: absolute;
+        }
+        .ui_select_dropdown_scrollbar .ui_select_dropdown_scrollbar_thumb {
+            width: 100%;
+            height: 60px;
+            top: 0px;
+            left: 0px;
+            position: absolute;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 99px;
+            cursor: pointer;
+            user-select: none;
+        }
+
+
     </style>
     <!--代码展示-->
     <style>
@@ -33,8 +124,6 @@
             padding-left: 10px;
             background-color: #f7f7f7;
         }
-
-
     </style>
 </head>
 <body>
@@ -61,7 +150,40 @@
                             </section>
                             <h2 data-scrollama-index="1">代码演示</h2>
                         </section>
-                        <section class="code_box" id="button_demo_basic" data-scrollama-index="2">
+                        <section class="code_box" id="button_demo_basic">
+                            <section class="code_box_demo">
+                                <div class="ui_select">
+                                    <div class="ui_select_selector">
+                                        <span class="ui_select_selection_search">
+                                            <input autocomplete="off" type="text" class="ui_select_selection_search_input" role="combobox" value="123">
+                                        </span>
+                                    </div>
+                                    <div class="ui_select_dropdown">
+                                        <div class="ui_select_list">
+                                            <div class="ui_select_item">11111</div>
+                                            <div class="ui_select_item">22222</div>
+                                            <div class="ui_select_item">32222</div>
+                                            <div class="ui_select_item">42222</div>
+                                            <div class="ui_select_item">52222</div>
+                                            <div class="ui_select_item">62222</div>
+                                            <div class="ui_select_item">72222</div>
+                                            <div class="ui_select_item">82222</div>
+                                            <div class="ui_select_item">92222</div>
+                                            <div class="ui_select_item">102222</div>
+                                            <div class="ui_select_item">112222</div>
+                                            <div class="ui_select_item">122222</div>
+                                            <div class="ui_select_item">132222</div>
+                                            <div class="ui_select_item">142222</div>
+                                            <div class="ui_select_item">152222</div>
+                                            <div class="ui_select_item">162222</div>
+                                            <div class="ui_select_item">172222</div>
+                                        </div>
+                                        <div class="ui_select_dropdown_scrollbar">
+                                            <div class="ui_select_dropdown_scrollbar_thumb"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </section>
                             <section class="code_box_demo">
                                 <p>基础用法 单选框</p>
                                 <select class="select_common">
@@ -99,7 +221,16 @@
         </div>
     </div>
 </body>
-<script type="module">
+<script>
 
+</script>
+<script type="module">
+    select_com.el='.ui_select';//按钮组件的选择器
+    //定义的click事件
+    select_com.click=function (e){
+        console.log('触发click事件')
+    }
+    //加载组件
+    com.load(select_com)
 </script>
 </html>
