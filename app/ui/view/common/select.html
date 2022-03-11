@@ -56,7 +56,7 @@
             position: absolute;
             top:38px;
             z-index: 999;
-            height: 200px;
+            max-height: 200px;
             box-sizing: border-box;
             padding: 4px 0;
             overflow: hidden;
@@ -85,6 +85,13 @@
         .ui_select_dropdown .ui_select_item:hover {
             background-color: #f5f5f5;
         }
+        .ui_select_dropdown .ui_select_item.disabled {
+            color: #999;
+        }
+        .ui_select_dropdown .ui_select_item.disabled:hover {
+            color: #999;
+        }
+
         .ui_select_dropdown_scrollbar{
             width: 8px;
             bottom: 0px;
@@ -150,8 +157,20 @@
                             </section>
                             <h2 data-scrollama-index="1">代码演示</h2>
                         </section>
-                        <section class="code_box" id="button_demo_basic">
+
+                        <section class="code_box" id="select_demo">
+                            <!--代码演示-->
                             <section class="code_box_demo">
+                                <!--原始数据-->
+                                <select class="select_common">
+                                    <option value="jack">Jack</option>
+                                    <option value="lucy">Lucy</option>
+                                    <option value="disabled" disabled>Disabled</option>
+                                    <option value="1">1</option>
+                                </select>
+                                <!--页面展示数据-->
+
+                                <sapn>原生html</sapn>
                                 <div class="ui_select">
                                     <div class="ui_select_selector">
                                         <span class="ui_select_selection_search">
@@ -159,31 +178,20 @@
                                         </span>
                                     </div>
                                     <div class="ui_select_dropdown">
-                                        <div class="ui_select_list">
-                                            <div class="ui_select_item">11111</div>
-                                            <div class="ui_select_item">22222</div>
-                                            <div class="ui_select_item">32222</div>
-                                            <div class="ui_select_item">42222</div>
-                                            <div class="ui_select_item">52222</div>
-                                            <div class="ui_select_item">62222</div>
-                                            <div class="ui_select_item">72222</div>
-                                            <div class="ui_select_item">82222</div>
-                                            <div class="ui_select_item">92222</div>
-                                            <div class="ui_select_item">102222</div>
-                                            <div class="ui_select_item">112222</div>
-                                            <div class="ui_select_item">122222</div>
-                                            <div class="ui_select_item">132222</div>
-                                            <div class="ui_select_item">142222</div>
-                                            <div class="ui_select_item">152222</div>
-                                            <div class="ui_select_item">162222</div>
-                                            <div class="ui_select_item">172222</div>
-                                        </div>
-                                        <div class="ui_select_dropdown_scrollbar">
-                                            <div class="ui_select_dropdown_scrollbar_thumb"></div>
+                                        <div style="position: relative;">
+                                            <div class="ui_select_list">
+                                                <div class="ui_select_item">11111</div>
+                                                <div class="ui_select_item disabled">22222</div>
+                                                <div class="ui_select_item">32222</div>
+                                            </div>
+                                            <div class="ui_select_dropdown_scrollbar">
+                                                <div class="ui_select_dropdown_scrollbar_thumb"></div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </section>
+
                             <section class="code_box_demo">
                                 <p>基础用法 单选框</p>
                                 <select class="select_common">
@@ -225,11 +233,7 @@
 
 </script>
 <script type="module">
-    select_com.el='.ui_select';//按钮组件的选择器
-    //定义的click事件
-    select_com.click=function (e){
-        console.log('触发click事件')
-    }
+    select_com.el='#select_demo .select_common';//按钮组件的选择器
     //加载组件
     com.load(select_com)
 </script>

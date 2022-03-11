@@ -107,40 +107,106 @@ const select_com = {
     name: 'select',
     //绑定对象
     el: '',
+    //模板
+    template:'<div class="ui_select">\
+                    <div class="ui_select_selector">\
+                        <span class="ui_select_selection_search">\
+                            <!--真实数据提交区域-->\
+                            <input autocomplete="off" type="text" class="ui_select_selection_search_input" role="combobox" value="123">\
+                        </span>\
+                    </div>\
+                    <div class="ui_select_dropdown">\
+                        <div style="position: relative;">\
+                            <!--选择列表部分-->\
+                            <div class="ui_select_list">\
+                                <div class="ui_select_item">11111</div>\
+                                <!--disabled 禁止选择-->\
+                                <div class="ui_select_item disabled">22222</div>\
+                                <div class="ui_select_item">32222</div>\
+                            </div>\
+                            <!--滚动条部分-->\
+                            <div class="ui_select_dropdown_scrollbar">\
+                                <div class="ui_select_dropdown_scrollbar_thumb"></div>\
+                            </div>\
+                        </div>\
+                    </div>\
+                </div>',
     //绑定方法
     bind: {
-        //加载时的操作
+        //加载事件
         load:function (e){
+            let select = document.querySelectorAll(e.el);
+            select.forEach(function(dom){
+                $(dom).css('display','none');//隐藏真实元素
+                let option_list=dom.querySelectorAll('option');//得到选项列表
+                //列表展示的元素
+                let template=$(e.template);
+                let option_html='';
+                option_list.forEach(function (item){
+                    option_html+='<div class="ui_select_item" data-value="'+item.value+'">'+item.text+'</div>';
+                });
+                template.find('.ui_select_list').html(option_html);
+                $(dom).after(template);
+            })
+
+        },
+        //滚动事件
+        scroll_handle:function (e){
             //对select 进行绑定事件
             let select = document.querySelectorAll(e.el);
             select.forEach(function(dom){
-                e.add_scroll_handle(dom.querySelector('.ui_select_dropdown'),e.scroll_handle)
+                //滚动事件
+                if (dom.addEventListener)dom.addEventListener('DOMMouseScroll', e.scroll_handle, false);
+                dom.onmousewheel = e.scroll_handle;
+            })
+        },
+        //子元素点击
+        item_click:function (e){
+            //对select 进行绑定事件
+            let select = document.querySelectorAll(e.el);
+            select.forEach(function(dom){
+                //滚动事件
+                if (dom.addEventListener){
+                    dom.addEventListener('click',e.item_click,false)
+                }else{
+                    console.log('select_com','无法绑定click事件')
+                }
             })
         },
     },
     //移除绑定
     remove_bind: {
-        //加载时的操作
+        //加载
         load:function (e){
-            //对select 移除绑定事件
+
+        },
+        //滚动事件
+        scroll_handle:function (e){
+            //对select 进行绑定事件
             let select = document.querySelectorAll(e.el);
             select.forEach(function(dom){
-                e.remove_scroll_handle(dom.querySelector('.ui_select_dropdown'),e.scroll_handle)
+                if (dom.addEventListener)dom.removeEventListener('DOMMouseScroll', e.scroll_handle, false);
+                dom.onmousewheel = null;
             })
+        },
+        //子元素选择
+        item_click:function (e){
+            /*
+            //对select 进行绑定事件
+            let select = document.querySelectorAll(e.el);
+            select.forEach(function(dom){
+                //滚动事件
+                if (dom.removeEventListener){
+                    dom.removeEventListener('click',e.click,false)
+                }else{
+                    console.log('select_com','无法绑定click事件')
+                }
+            })
+             */
         },
     },
     //事件列表
     methods: {
-        //添加滚动事件
-        add_scroll_handle:function (obj,scroll_handle){
-            if (obj.addEventListener)obj.addEventListener('DOMMouseScroll', scroll_handle, false)
-            obj.onmousewheel = scroll_handle
-        },
-        //移除绑定事件
-        remove_scroll_handle:function (obj,scroll_handle){
-            if (obj.addEventListener)obj.removeEventListener('DOMMouseScroll', scroll_handle, false)
-            obj.onmousewheel = null
-        },
         //添加滚动事件处理
         scroll_handle:function(e){
             e.preventDefault();
@@ -161,10 +227,12 @@ const select_com = {
                 select_box[0].scrollTop-=item_height;
             }
             let true_scroll_top=select_box[0].scrollTop/(list_height-box_height);//得到当前滚动占比
-            console.log('true_scroll_top',true_scroll_top,'scrollbar_box_height',scrollbar_box_height,'scrollbar_height',scrollbar_height,'v',true_scroll_top*(scrollbar_box_height-scrollbar_height))
             let new_top=true_scroll_top*(scrollbar_box_height-scrollbar_height);
             scrollbar_thumb.css('top',new_top+'px');
             return false;
+        },
+        item_click:function (e){
+            console.log($(e.target).text())
         },
     },
 };
