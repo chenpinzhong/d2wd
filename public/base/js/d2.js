@@ -133,31 +133,47 @@ const select_com = {
                 </div>',
     //绑定方法
     bind: {
-        //加载事件
+        //加载组件
         load:function (e){
             let select = document.querySelectorAll(e.el);
             select.forEach(function(dom){
+                let dom_id=$(dom).attr('id')
+                if(typeof(dom_id)=="undefined"){
+                    dom_id=e.name+'_'+e.random_string()//得到一个随机的id
+                    $(dom).attr('id',dom_id)
+                }
                 $(dom).css('display','none');//隐藏真实元素
                 let option_list=dom.querySelectorAll('option');//得到选项列表
                 //列表展示的元素
                 let template=$(e.template);
+                template.attr('data-id',dom_id);
                 let option_html='';
                 option_list.forEach(function (item){
                     option_html+='<div class="ui_select_item" data-value="'+item.value+'">'+item.text+'</div>';
                 });
                 template.find('.ui_select_list').html(option_html);
                 $(dom).after(template);
+                //对增值的元素 绑定事件
             })
-
+        },
+        //显示组件
+        show:function(e){
+            let select = document.querySelectorAll(e.el);
+            select.forEach(function(dom){
+                let dom_id=dom.id;
+                let dom_scroll=document.querySelector('[data-id="'+dom_id+'"] .ui_select_selector')
+                dom_scroll.addEventListener('click', e.show_click, false);
+            })
         },
         //滚动事件
         scroll_handle:function (e){
             //对select 进行绑定事件
             let select = document.querySelectorAll(e.el);
             select.forEach(function(dom){
-                //滚动事件
-                if (dom.addEventListener)dom.addEventListener('DOMMouseScroll', e.scroll_handle, false);
-                dom.onmousewheel = e.scroll_handle;
+                let dom_id=dom.id;
+                let dom_scroll=document.querySelector('[data-id="'+dom_id+'"] .ui_select_dropdown')
+                if (dom_scroll.addEventListener)dom_scroll.addEventListener('DOMMouseScroll', e.scroll_handle, false);
+                dom_scroll.onmousewheel = e.scroll_handle;
             })
         },
         //子元素点击
@@ -165,12 +181,16 @@ const select_com = {
             //对select 进行绑定事件
             let select = document.querySelectorAll(e.el);
             select.forEach(function(dom){
-                //滚动事件
-                if (dom.addEventListener){
-                    dom.addEventListener('click',e.item_click,false)
-                }else{
-                    console.log('select_com','无法绑定click事件')
-                }
+                let dom_id=dom.id;
+                let ui_select_item=document.querySelectorAll('[data-id="'+dom_id+'"] .ui_select_dropdown .ui_select_list .ui_select_item')
+                ui_select_item.forEach(function(dom){
+                    //滚动事件
+                    if (dom.addEventListener){
+                        dom.addEventListener('click',e.item_click,false)
+                    }else{
+                        console.log('select_com','无法绑定click事件')
+                    }
+                })
             })
         },
     },
@@ -207,6 +227,25 @@ const select_com = {
     },
     //事件列表
     methods: {
+        _this:this,
+         //获取随机字符串
+         random_string:function(length=6) {
+            let str = '0123456789';
+            let result = '';
+            for (let i = length; i > 0; --i){
+                result += str[Math.floor(Math.random() * str.length)];
+            }
+            return result;
+        },
+        //显示组件
+        show_click:function (e){
+            let ui_select_dropdown=$(e.target).parents('.ui_select').find('.ui_select_dropdown')
+            if(ui_select_dropdown.is(":hidden")){
+                ui_select_dropdown.show();
+            }else{
+                ui_select_dropdown.hide();
+            }
+        },
         //添加滚动事件处理
         scroll_handle:function(e){
             e.preventDefault();
@@ -232,7 +271,8 @@ const select_com = {
             return false;
         },
         item_click:function (e){
-            console.log($(e.target).text())
+            let ui_select_dropdown=$(e.target).parents('.ui_select').find('.ui_select_dropdown')
+            ui_select_dropdown.hide();
         },
     },
 };

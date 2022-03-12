@@ -6,8 +6,6 @@
     {include file="base/header"/}
     <link rel="stylesheet" type="text/css" href="/base/extend/codemirror-5.65.0/lib/codemirror.css">
     <link rel="stylesheet" type="text/css" href="/base/extend/codemirror-5.65.0/theme/ttcn.css">
-
-    
     <script charset="utf-8" src="/base/extend/codemirror-5.65.0/lib/codemirror.js"></script>
     <script charset="utf-8" src="/base/extend/codemirror-5.65.0/mode/xml/xml.js"></script>
     <script charset="utf-8" src="/base/extend/codemirror-5.65.0/mode/javascript/javascript.js"></script>
@@ -66,7 +64,8 @@
             border-radius: 2px;
             outline: none;
             width: 100%;
-            box-shadow: 0 3px 6px -4px #0000001f,0 6px 16px #00000014,0 9px 28px 8px #0000000d
+            box-shadow: 0 3px 6px -4px #0000001f,0 6px 16px #00000014,0 9px 28px 8px #0000000d;
+            display: none;
         }
         .ui_select_dropdown .ui_select_list{
             position: relative;
@@ -162,14 +161,18 @@
                             <!--代码演示-->
                             <section class="code_box_demo">
                                 <!--原始数据-->
-                                <select class="select_common">
+                                <select class="select_common" name="select_val">
                                     <option value="jack">Jack</option>
                                     <option value="lucy">Lucy</option>
                                     <option value="disabled" disabled>Disabled</option>
                                     <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                    <option value="5">5</option>
+                                    <option value="6">6</option>
                                 </select>
                                 <!--页面展示数据-->
-
                                 <sapn>原生html</sapn>
                                 <div class="ui_select">
                                     <div class="ui_select_selector">
@@ -191,14 +194,19 @@
                                     </div>
                                 </div>
                             </section>
-
                             <section class="code_box_demo">
                                 <p>基础用法 单选框</p>
-                                <select class="select_common">
+                                <select class="select_multiple">
                                     <option value="jack">Jack</option>
                                     <option value="lucy">Lucy</option>
                                     <option value="disabled" disabled>Disabled</option>
                                     <option value="1">1</option>
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                    <option value="5">5</option>
+                                    <option value="6">6</option>
                                 </select>
                                 <p>基础用法 多选框</p>
                                 <select class="select_multiple">
@@ -230,7 +238,6 @@
     </div>
 </body>
 <script>
-
 </script>
 <script type="module">
     select_com.el='#select_demo .select_common';//按钮组件的选择器
