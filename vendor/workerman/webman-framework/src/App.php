@@ -158,9 +158,9 @@ class App
             }
             //解析请求路径得到 模块/控制器/方法
             $controller_and_action = static::parseControllerAction($path);
-            $app = $controller_and_action['app'];
-            $controller = $controller_and_action['controller'];
-            $action = $controller_and_action['action'];
+            $request->app= $app = $controller_and_action['app'];
+            $request->controller = $controller = $controller_and_action['controller'];
+            $request->action = $action = $controller_and_action['action'];
             $instance = $controller_and_action['instance'];
 
             if (static::findFile($connection, $path, $key, $request)) {

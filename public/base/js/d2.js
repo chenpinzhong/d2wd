@@ -107,12 +107,17 @@ const select_com = {
     name: 'select',
     //绑定对象
     el: '',
+    //相关数据
+    data:{
+        //默认值
+        default:{'id':'',name:'你好',site:'aaa',select_val:'foofoo'},
+    },
     //模板
-    template:'<div class="ui_select">\
+    template:'<div class="ui_select" >\
                     <div class="ui_select_selector">\
                         <span class="ui_select_selection_search">\
                             <!--真实数据提交区域-->\
-                            <input autocomplete="off" type="text" class="ui_select_selection_search_input" role="combobox" value="123">\
+                            <input autocomplete="off" type="text" class="ui_select_selection_search_input" role="combobox" v-model="select_val">\
                         </span>\
                     </div>\
                     <div class="ui_select_dropdown">\
@@ -137,11 +142,13 @@ const select_com = {
         load:function (e){
             let select = document.querySelectorAll(e.el);
             select.forEach(function(dom){
-                let dom_id=$(dom).attr('id')
+                //获取元素唯一ID
+                let dom_id=$(dom).attr('id');
                 if(typeof(dom_id)=="undefined"){
                     dom_id=e.name+'_'+e.random_string()//得到一个随机的id
                     $(dom).attr('id',dom_id)
                 }
+
                 $(dom).css('display','none');//隐藏真实元素
                 let option_list=dom.querySelectorAll('option');//得到选项列表
                 //列表展示的元素
@@ -153,7 +160,15 @@ const select_com = {
                 });
                 template.find('.ui_select_list').html(option_html);
                 $(dom).after(template);
-                //对增值的元素 绑定事件
+
+
+                e.data[dom_id]=e.data['default'];//复制基础数据
+                e.data[dom_id]['id'] = new Vue({
+                    el: "[data-id='"+dom_id+"']",
+                    data: e.data[dom_id]
+                })
+
+
             })
         },
         //显示组件
@@ -227,9 +242,8 @@ const select_com = {
     },
     //事件列表
     methods: {
-        _this:this,
-         //获取随机字符串
-         random_string:function(length=6) {
+        //获取随机字符串
+        random_string:function(length=6) {
             let str = '0123456789';
             let result = '';
             for (let i = length; i > 0; --i){
@@ -271,8 +285,19 @@ const select_com = {
             return false;
         },
         item_click:function (e){
-            let ui_select_dropdown=$(e.target).parents('.ui_select').find('.ui_select_dropdown')
+            let $this=$(e.target);
+            let ui_select=$($this).parents('.ui_select');
+            let dom_id=ui_select.data('id');//得到对象id
+            let ui_select_dropdown=ui_select.find('.ui_select_dropdown');
             ui_select_dropdown.hide();
+            //真实的值
+            let value=$this.data('value');
+            //显示的值
+            let text=$this.text();
+            //select_com.data[dom_id]['foo'];
+
+            $($this).parents('.ui_select').find('.ui_select_selector .ui_select_selection_search_input');
+            console.log(value,text)
         },
     },
 };
