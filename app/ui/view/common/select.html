@@ -18,14 +18,10 @@
             padding: 0;
             color: #000000d9;
             font-size: 14px;
-            font-variant: tabular-nums;
-            line-height: 1.5715;
             list-style: none;
-            font-feature-settings: "tnum";
             position: relative;
             display: inline-block;
             cursor: pointer;
-            position: relative;
         }
         .ui_select .ui_select_selector {
             width: 100%;
@@ -36,7 +32,12 @@
             border: 1px solid #d9d9d9;
             border-radius: 2px;
             transition: all .3s cubic-bezier(.645,.045,.355,1);
+            display: flex;
         }
+        .ui_select .ui_select_selector .ui_select_selection_search{
+            flex: 1;
+        }
+
         .ui_select_selection_search_input{
             margin: 0;
             padding: 0;
@@ -46,6 +47,10 @@
             appearance: none;
             height: 30px;
         }
+        .ui_select_arrow{
+            padding: 8px 0;
+        }
+
         .ui_select_dropdown {
             margin: 0;
             color: #000000d9;
@@ -160,24 +165,33 @@
                             <!--代码演示-->
                             <section class="code_box_demo">
                                 <!--原始数据-->
-                                <select class="select_common" name="select_val">
+                                <select class="select_common" data-name="select_val">
                                     <option value="jack">Jack</option>
                                     <option value="lucy">Lucy</option>
-                                    <option value="disabled" disabled>Disabled</option>
+                                    <option value="cc" disabled>Disabled</option>
                                     <option value="1">1</option>
                                     <option value="2">2</option>
-                                    <option value="3">3</option>
-                                    <option value="4">4</option>
-                                    <option value="5">5</option>
-                                    <option value="6">6</option>
                                 </select>
                                 <!--页面展示数据-->
                                 <sapn>原生html</sapn>
+                                <!--html原型-->
                                 <div class="ui_select">
                                     <div class="ui_select_selector">
-                                        <span class="ui_select_selection_search">
-                                            <input autocomplete="off" type="text" class="ui_select_selection_search_input" role="combobox" value="123">
-                                        </span>
+                                        <div class="ui_select_selection_search">
+                                            <input autocomplete="off" type="text" class="ui_select_selection_search_input" role="combobox" value="">
+                                        </div>
+                                        <div v-if="icon_down" class="ui_select_arrow"   style="user-select: none;">
+                                            <span role="img" aria-label="down" class="ui_icon icon_down ui--select-suffix">
+                                                <svg viewBox="64 64 896 896" focusable="false" data-icon="down" width="14px" height="14px" fill="currentColor" aria-hidden="true">
+                                                    <path d="M884 256h-75c-5.1 0-9.9 2.5-12.9 6.6L512 654.2 227.9 262.6c-3-4.1-7.8-6.6-12.9-6.6h-75c-6.5 0-10.3 7.4-6.5 12.7l352.6 486.1c12.8 17.6 39 17.6 51.7 0l352.6-486.1c3.9-5.3.1-12.7-6.4-12.7z"></path>
+                                                </svg>
+                                            </span>
+                                            <span v-if="icon_search" role="img" aria-label="search" class="ui_icon icon_search">
+                                                <svg viewBox="64 64 896 896" focusable="false" data-icon="search" width="14px" height="14px" fill="currentColor" aria-hidden="true">
+                                                    <path d="M909.6 854.5L649.9 594.8C690.2 542.7 712 479 712 412c0-80.2-31.3-155.4-87.9-212.1-56.6-56.7-132-87.9-212.1-87.9s-155.5 31.3-212.1 87.9C143.2 256.5 112 331.8 112 412c0 80.1 31.3 155.5 87.9 212.1C256.5 680.8 331.8 712 412 712c67 0 130.6-21.8 182.7-62l259.7 259.6a8.2 8.2 0 0011.6 0l43.6-43.5a8.2 8.2 0 000-11.6zM570.4 570.4C528 612.7 471.8 636 412 636s-116-23.3-158.4-65.6C211.3 528 188 471.8 188 412s23.3-116.1 65.6-158.4C296 211.3 352.2 188 412 188s116.1 23.2 158.4 65.6S636 352.2 636 412s-23.3 116.1-65.6 158.4z"></path>
+                                                </svg>
+                                            </span>
+                                        </div>
                                     </div>
                                     <div class="ui_select_dropdown">
                                         <div style="position: relative;">

@@ -110,15 +110,36 @@ const select_com = {
     //相关数据
     data:{
         //默认值
-        default:{'id':'',name:'你好',site:'aaa',select_val:'foofoo'},
+        default:{
+            'id':'',
+            'name':'',//表单的名称
+            'select_value':'',//真实选择的值
+            'select_text':'',//真实选择的内容
+            'icon_down':true,
+            'icon_search':false,
+        },
     },
-    //模板
+    //组件模板
     template:'<div class="ui_select" >\
                     <div class="ui_select_selector">\
                         <span class="ui_select_selection_search">\
                             <!--真实数据提交区域-->\
-                            <input autocomplete="off" type="text" class="ui_select_selection_search_input" role="combobox" v-model="select_val">\
+                            <input autocomplete="off" type="hidden" v-bind:name="name" v-model="select_value">\
+                            <!--选择数据显示区域-->\
+                            <input autocomplete="off" type="text" class="ui_select_selection_search_input"  role="combobox" v-model="select_value">\
                         </span>\
+                        <div class="ui_select_arrow"   style="user-select: none;">\
+                            <span v-if="icon_down"  role="img" aria-label="down" class="ui_icon icon_down">\
+                                <svg viewBox="64 64 896 896" focusable="false" data-icon="down" width="14px" height="14px" fill="currentColor">\
+                                    <path d="M884 256h-75c-5.1 0-9.9 2.5-12.9 6.6L512 654.2 227.9 262.6c-3-4.1-7.8-6.6-12.9-6.6h-75c-6.5 0-10.3 7.4-6.5 12.7l352.6 486.1c12.8 17.6 39 17.6 51.7 0l352.6-486.1c3.9-5.3.1-12.7-6.4-12.7z"></path>\
+                                </svg>\
+                            </span>\
+                            <span v-if="icon_search" role="img" aria-label="search" class="ui_icon icon_search">\
+                                <svg viewBox="64 64 896 896" focusable="false" data-icon="search" width="14px" height="14px" fill="currentColor">\
+                                    <path d="M909.6 854.5L649.9 594.8C690.2 542.7 712 479 712 412c0-80.2-31.3-155.4-87.9-212.1-56.6-56.7-132-87.9-212.1-87.9s-155.5 31.3-212.1 87.9C143.2 256.5 112 331.8 112 412c0 80.1 31.3 155.5 87.9 212.1C256.5 680.8 331.8 712 412 712c67 0 130.6-21.8 182.7-62l259.7 259.6a8.2 8.2 0 0011.6 0l43.6-43.5a8.2 8.2 0 000-11.6zM570.4 570.4C528 612.7 471.8 636 412 636s-116-23.3-158.4-65.6C211.3 528 188 471.8 188 412s23.3-116.1 65.6-158.4C296 211.3 352.2 188 412 188s116.1 23.2 158.4 65.6S636 352.2 636 412s-23.3 116.1-65.6 158.4z"></path>\
+                                </svg>\
+                            </span>\
+                        </div>\
                     </div>\
                     <div class="ui_select_dropdown">\
                         <div style="position: relative;">\
@@ -148,27 +169,39 @@ const select_com = {
                     dom_id=e.name+'_'+e.random_string()//得到一个随机的id
                     $(dom).attr('id',dom_id)
                 }
+                //真实提交的表单名称
+                let name=$(dom).data('name');
 
                 $(dom).css('display','none');//隐藏真实元素
                 let option_list=dom.querySelectorAll('option');//得到选项列表
                 //列表展示的元素
                 let template=$(e.template);
                 template.attr('data-id',dom_id);
+
+                let select_value,select_text='';
+
                 let option_html='';
                 option_list.forEach(function (item){
+                    //设置默认值
+                    if(item.disabled==true || select_value==''){
+                        select_value=item.value
+                        select_text=item.text
+                    }
                     option_html+='<div class="ui_select_item" data-value="'+item.value+'">'+item.text+'</div>';
                 });
                 template.find('.ui_select_list').html(option_html);
                 $(dom).after(template);
 
-
-                e.data[dom_id]=e.data['default'];//复制基础数据
-                e.data[dom_id]['id'] = new Vue({
+                select_com.data[dom_id]=select_com.data['default'];//复制基础数据
+                select_com.data[dom_id]['id'] = new Vue({
                     el: "[data-id='"+dom_id+"']",
-                    data: e.data[dom_id]
+                    data: select_com.data[dom_id]
                 })
 
-
+                //显示的值
+                select_com.data[dom_id]['name']=name;
+                select_com.data[dom_id]['select_value']=select_value;
+                select_com.data[dom_id]['select_value']=select_text;
             })
         },
         //显示组件
@@ -292,12 +325,10 @@ const select_com = {
             ui_select_dropdown.hide();
             //真实的值
             let value=$this.data('value');
-            //显示的值
             let text=$this.text();
-            //select_com.data[dom_id]['foo'];
 
-            $($this).parents('.ui_select').find('.ui_select_selector .ui_select_selection_search_input');
-            console.log(value,text)
+            select_com.data[dom_id]['select_value']=value;
+            select_com.data[dom_id]['select_text']=text;
         },
     },
 };
