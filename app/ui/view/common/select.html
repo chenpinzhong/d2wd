@@ -12,6 +12,13 @@
     <script charset="utf-8" src="/base/extend/codemirror-5.65.0/mode/css/css.js"></script>
     <script charset="utf-8" src="/base/extend/codemirror-5.65.0/mode/htmlmixed/htmlmixed.js"></script>
     <style>
+        /*is-show动画*/
+        .fade-enter-active, .fade-leave-active {
+            transition: height 100ms,opacity 100ms;
+        }
+        .fade-enter, .fade-leave-to{
+            opacity: 0;
+        }
         .ui_select {
             box-sizing: border-box;
             margin: 0;
@@ -37,7 +44,6 @@
         .ui_select .ui_select_selector .ui_select_selection_search{
             flex: 1;
         }
-
         .ui_select_selection_search_input{
             margin: 0;
             padding: 0;
@@ -46,11 +52,12 @@
             outline: none;
             appearance: none;
             height: 30px;
+            width: auto;
+            max-width: 120px;
         }
         .ui_select_arrow{
             padding: 8px 0;
         }
-
         .ui_select_dropdown {
             margin: 0;
             color: #000000d9;
@@ -70,7 +77,6 @@
             outline: none;
             width: 100%;
             box-shadow: 0 3px 6px -4px #0000001f,0 6px 16px #00000014,0 9px 28px 8px #0000000d;
-            display: none;
         }
         .ui_select_dropdown .ui_select_list{
             position: relative;
@@ -171,6 +177,8 @@
                                     <option value="cc" disabled>Disabled</option>
                                     <option value="1">1</option>
                                     <option value="2">2</option>
+                                    <option value="3">33333</option>
+                                    <option value="4">44444</option>
                                 </select>
                                 <!--页面展示数据-->
                                 <sapn>原生html</sapn>

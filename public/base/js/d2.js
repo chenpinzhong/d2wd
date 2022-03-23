@@ -117,6 +117,7 @@ const select_com = {
             'select_text':'',//真实选择的内容
             'icon_down':true,
             'icon_search':false,
+            'select_dropdown':false,//是否显示下拉菜单
         },
     },
     //组件模板
@@ -126,22 +127,23 @@ const select_com = {
                             <!--真实数据提交区域-->\
                             <input autocomplete="off" type="hidden" v-bind:name="name" v-model="select_value">\
                             <!--选择数据显示区域-->\
-                            <input autocomplete="off" type="text" class="ui_select_selection_search_input"  role="combobox" v-model="select_value">\
+                            <input autocomplete="off" type="text" class="ui_select_selection_search_input"  role="combobox" v-model="select_text">\
                         </span>\
                         <div class="ui_select_arrow"   style="user-select: none;">\
-                            <span v-if="icon_down"  role="img" aria-label="down" class="ui_icon icon_down">\
+                            <span v-show="icon_down"  role="img" aria-label="down" class="ui_icon icon_down">\
                                 <svg viewBox="64 64 896 896" focusable="false" data-icon="down" width="14px" height="14px" fill="currentColor">\
                                     <path d="M884 256h-75c-5.1 0-9.9 2.5-12.9 6.6L512 654.2 227.9 262.6c-3-4.1-7.8-6.6-12.9-6.6h-75c-6.5 0-10.3 7.4-6.5 12.7l352.6 486.1c12.8 17.6 39 17.6 51.7 0l352.6-486.1c3.9-5.3.1-12.7-6.4-12.7z"></path>\
                                 </svg>\
                             </span>\
-                            <span v-if="icon_search" role="img" aria-label="search" class="ui_icon icon_search">\
+                            <span v-show="icon_search" role="img" aria-label="search" class="ui_icon icon_search">\
                                 <svg viewBox="64 64 896 896" focusable="false" data-icon="search" width="14px" height="14px" fill="currentColor">\
                                     <path d="M909.6 854.5L649.9 594.8C690.2 542.7 712 479 712 412c0-80.2-31.3-155.4-87.9-212.1-56.6-56.7-132-87.9-212.1-87.9s-155.5 31.3-212.1 87.9C143.2 256.5 112 331.8 112 412c0 80.1 31.3 155.5 87.9 212.1C256.5 680.8 331.8 712 412 712c67 0 130.6-21.8 182.7-62l259.7 259.6a8.2 8.2 0 0011.6 0l43.6-43.5a8.2 8.2 0 000-11.6zM570.4 570.4C528 612.7 471.8 636 412 636s-116-23.3-158.4-65.6C211.3 528 188 471.8 188 412s23.3-116.1 65.6-158.4C296 211.3 352.2 188 412 188s116.1 23.2 158.4 65.6S636 352.2 636 412s-23.3 116.1-65.6 158.4z"></path>\
                                 </svg>\
                             </span>\
                         </div>\
                     </div>\
-                    <div class="ui_select_dropdown">\
+                    <transition name="fade">\
+                    <div v-show="select_dropdown" class="ui_select_dropdown">\
                         <div style="position: relative;">\
                             <!--选择列表部分-->\
                             <div class="ui_select_list">\
@@ -156,6 +158,7 @@ const select_com = {
                             </div>\
                         </div>\
                     </div>\
+                    </transition>\
                 </div>',
     //绑定方法
     bind: {
@@ -169,18 +172,17 @@ const select_com = {
                     dom_id=e.name+'_'+e.random_string()//得到一个随机的id
                     $(dom).attr('id',dom_id)
                 }
-                //真实提交的表单名称
+                //隐藏真实表单
                 let name=$(dom).data('name');
-
                 $(dom).css('display','none');//隐藏真实元素
-                let option_list=dom.querySelectorAll('option');//得到选项列表
-                //列表展示的元素
+                //得到选项列表
+                let option_list=dom.querySelectorAll('option');
+
+                let select_value=''
+                let select_text='';
+                let option_html='';
                 let template=$(e.template);
                 template.attr('data-id',dom_id);
-
-                let select_value,select_text='';
-
-                let option_html='';
                 option_list.forEach(function (item){
                     //设置默认值
                     if(item.disabled==true || select_value==''){
@@ -192,16 +194,35 @@ const select_com = {
                 template.find('.ui_select_list').html(option_html);
                 $(dom).after(template);
 
+                ////////////////////////////////////////////////////
+                //VUE 相关的操作
                 select_com.data[dom_id]=select_com.data['default'];//复制基础数据
                 select_com.data[dom_id]['id'] = new Vue({
                     el: "[data-id='"+dom_id+"']",
-                    data: select_com.data[dom_id]
-                })
-
+                    data: select_com.data[dom_id],
+                    watch : {
+                        select_dropdown:function(val) {
+                            if(val==true){
+                                this.icon_down=false;
+                                this.icon_search=true;
+                            }else{
+                                this.icon_down=true;
+                                this.icon_search=false;
+                            }
+                        },
+                    },
+                    methods:{
+                        //失去焦点 下拉框隐藏
+                        select_blur:function (name){
+                            console.log(name)
+                            //setTimeout(function(){select_com.data[dom_id]['select_dropdown']=false;},200);
+                        },
+                    }
+                });
                 //显示的值
                 select_com.data[dom_id]['name']=name;
                 select_com.data[dom_id]['select_value']=select_value;
-                select_com.data[dom_id]['select_value']=select_text;
+                select_com.data[dom_id]['select_text']=select_text;
             })
         },
         //显示组件
@@ -209,8 +230,17 @@ const select_com = {
             let select = document.querySelectorAll(e.el);
             select.forEach(function(dom){
                 let dom_id=dom.id;
-                let dom_scroll=document.querySelector('[data-id="'+dom_id+'"] .ui_select_selector')
+                let dom_scroll=document.querySelector('[data-id="'+dom_id+'"] .ui_select_selector');
                 dom_scroll.addEventListener('click', e.show_click, false);
+            })
+        },
+        //搜索相关
+        input:function(e){
+            let select = document.querySelectorAll(e.el);
+            select.forEach(function(dom){
+                let dom_id=dom.id;
+                let dom_scroll=document.querySelector('[data-id="'+dom_id+'"] .ui_select_selector');
+                dom_scroll.addEventListener('input', e.input, false);
             })
         },
         //滚动事件
@@ -244,34 +274,6 @@ const select_com = {
     },
     //移除绑定
     remove_bind: {
-        //加载
-        load:function (e){
-
-        },
-        //滚动事件
-        scroll_handle:function (e){
-            //对select 进行绑定事件
-            let select = document.querySelectorAll(e.el);
-            select.forEach(function(dom){
-                if (dom.addEventListener)dom.removeEventListener('DOMMouseScroll', e.scroll_handle, false);
-                dom.onmousewheel = null;
-            })
-        },
-        //子元素选择
-        item_click:function (e){
-            /*
-            //对select 进行绑定事件
-            let select = document.querySelectorAll(e.el);
-            select.forEach(function(dom){
-                //滚动事件
-                if (dom.removeEventListener){
-                    dom.removeEventListener('click',e.click,false)
-                }else{
-                    console.log('select_com','无法绑定click事件')
-                }
-            })
-             */
-        },
     },
     //事件列表
     methods: {
@@ -286,12 +288,20 @@ const select_com = {
         },
         //显示组件
         show_click:function (e){
-            let ui_select_dropdown=$(e.target).parents('.ui_select').find('.ui_select_dropdown')
-            if(ui_select_dropdown.is(":hidden")){
-                ui_select_dropdown.show();
-            }else{
-                ui_select_dropdown.hide();
-            }
+            let ui_select=$(e.target).parents('.ui_select');
+            let dom_id=ui_select.data('id');//得到对象id
+            select_com.data[dom_id]['select_dropdown']=!select_com.data[dom_id]['select_dropdown'];
+        },
+        //输入事件
+        input:function (e){
+            let $this=$(e.target);
+            let ui_select=$($this).parents('.ui_select');
+            let dom_id=ui_select.data('id');//得到对象id
+            let option_html='';
+            $("#"+dom_id).find('option').each(function (item){
+                option_html+='<div class="ui_select_item" data-value="'+item.value+'">'+item.text+'</div>';
+            });
+
         },
         //添加滚动事件处理
         scroll_handle:function(e){
@@ -321,14 +331,14 @@ const select_com = {
             let $this=$(e.target);
             let ui_select=$($this).parents('.ui_select');
             let dom_id=ui_select.data('id');//得到对象id
-            let ui_select_dropdown=ui_select.find('.ui_select_dropdown');
-            ui_select_dropdown.hide();
             //真实的值
             let value=$this.data('value');
             let text=$this.text();
 
-            select_com.data[dom_id]['select_value']=value;
-            select_com.data[dom_id]['select_text']=text;
+            select_com.data[dom_id]['select_value']=value;//真实提交的值
+            select_com.data[dom_id]['select_text']=text;//页面显示的值
+            //隐藏下拉框
+            select_com.data[dom_id]['select_dropdown']=false;
         },
     },
 };
