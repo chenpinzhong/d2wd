@@ -177,7 +177,6 @@ const select_com = {
                 $(dom).css('display','none');//隐藏真实元素
                 //得到选项列表
                 let option_list=dom.querySelectorAll('option');
-
                 let select_value=''
                 let select_text='';
                 let option_html='';
@@ -191,7 +190,7 @@ const select_com = {
                     }
                     option_html+='<div class="ui_select_item" data-value="'+item.value+'">'+item.text+'</div>';
                 });
-                template.find('.ui_select_list').html(option_html);
+                //template.find('.ui_select_list').html(option_html);
                 $(dom).after(template);
 
                 ////////////////////////////////////////////////////
@@ -223,6 +222,7 @@ const select_com = {
                 select_com.data[dom_id]['name']=name;
                 select_com.data[dom_id]['select_value']=select_value;
                 select_com.data[dom_id]['select_text']=select_text;
+                select_com.data[dom_id]['item_html']=option_html;
             })
         },
         //显示组件
@@ -298,8 +298,12 @@ const select_com = {
             let ui_select=$($this).parents('.ui_select');
             let dom_id=ui_select.data('id');//得到对象id
             let option_html='';
-            $("#"+dom_id).find('option').each(function (item){
-                option_html+='<div class="ui_select_item" data-value="'+item.value+'">'+item.text+'</div>';
+            let option_list=document.querySelectorAll('#'+dom_id+' option');
+            let select_text=select_com.data[dom_id]['select_text'];//页面显示的值
+            option_list.forEach(function (item){
+                if(item.text.indexOf(select_text)){
+                    option_html+='<div class="ui_select_item" data-value="'+item.value+'">'+item.text+'</div>';
+                }
             });
 
         },
