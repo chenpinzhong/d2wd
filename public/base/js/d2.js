@@ -190,7 +190,7 @@ const select_com = {
                     }
                     option_html+='<div class="ui_select_item" data-value="'+item.value+'">'+item.text+'</div>';
                 });
-                //template.find('.ui_select_list').html(option_html);
+                template.find('.ui_select_list').html(option_html);
                 $(dom).after(template);
 
                 ////////////////////////////////////////////////////
@@ -213,7 +213,6 @@ const select_com = {
                     methods:{
                         //失去焦点 下拉框隐藏
                         select_blur:function (name){
-                            console.log(name)
                             //setTimeout(function(){select_com.data[dom_id]['select_dropdown']=false;},200);
                         },
                     }
@@ -224,6 +223,9 @@ const select_com = {
                 select_com.data[dom_id]['select_text']=select_text;
                 select_com.data[dom_id]['item_html']=option_html;
             })
+
+            //监听body点击事件 方便下拉框 隐藏
+            dom.addEventListener('click',e.body_click,false)
         },
         //显示组件
         show:function(e){
@@ -271,6 +273,7 @@ const select_com = {
                 })
             })
         },
+
     },
     //移除绑定
     remove_bind: {
@@ -292,20 +295,36 @@ const select_com = {
             let dom_id=ui_select.data('id');//得到对象id
             select_com.data[dom_id]['select_dropdown']=!select_com.data[dom_id]['select_dropdown'];
         },
+        body_click:function (e){
+            let ui_select=$(e.target).parents('.ui_select');
+            let dom_id=ui_select.data('id');//得到对象id
+            select_com.data[dom_id]['select_dropdown']=!select_com.data[dom_id]['select_dropdown'];
+        }
         //输入事件
         input:function (e){
             let $this=$(e.target);
             let ui_select=$($this).parents('.ui_select');
             let dom_id=ui_select.data('id');//得到对象id
-            let option_html='';
-            let option_list=document.querySelectorAll('#'+dom_id+' option');
-            let select_text=select_com.data[dom_id]['select_text'];//页面显示的值
-            option_list.forEach(function (item){
-                if(item.text.indexOf(select_text)){
-                    option_html+='<div class="ui_select_item" data-value="'+item.value+'">'+item.text+'</div>';
+
+            let select_list=ui_select.find('.ui_select_list');
+            let select_list_item=ui_select.find('.ui_select_list .ui_select_item');
+            let scrollbar_box=ui_select.find('.ui_select_dropdown_scrollbar');
+            let scrollbar_thumb=ui_select.find('.ui_select_dropdown_scrollbar .ui_select_dropdown_scrollbar_thumb');
+
+            //用户搜索的值
+            let search_value=select_com.data[dom_id]['select_text'].toLowerCase();//页面显示的值
+            select_list_item.each(function(){
+                if($.trim(search_value)=='') {
+                    $(this).show();
+                }else if($(this).text().toLowerCase().indexOf(search_value) >= 0){
+                    $(this).show();
+                }else {
+                    $(this).hide();
                 }
             });
-
+            //控制滚动条位置
+            $(ui_select).find('.ui_select_dropdown')[0].scrollTop=0;
+            scrollbar_thumb.css('top',0+'px');
         },
         //添加滚动事件处理
         scroll_handle:function(e){
