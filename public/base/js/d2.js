@@ -118,6 +118,7 @@ const select_com = {
             'icon_down':true,
             'icon_search':false,
             'select_dropdown':false,//是否显示下拉菜单
+            'dropdown_scrollbar':false,//滚动条是否显示
         },
     },
     //组件模板
@@ -153,7 +154,7 @@ const select_com = {
                                 <div class="ui_select_item">32222</div>\
                             </div>\
                             <!--滚动条部分-->\
-                            <div class="ui_select_dropdown_scrollbar">\
+                            <div v-show="dropdown_scrollbar" class="ui_select_dropdown_scrollbar">\
                                 <div class="ui_select_dropdown_scrollbar_thumb"></div>\
                             </div>\
                         </div>\
@@ -201,6 +202,7 @@ const select_com = {
                     data: select_com.data[dom_id],
                     watch : {
                         select_dropdown:function(val) {
+                            //判断显示的搜索图标
                             if(val==true){
                                 this.icon_down=false;
                                 this.icon_search=true;
@@ -208,6 +210,7 @@ const select_com = {
                                 this.icon_down=true;
                                 this.icon_search=false;
                             }
+
                         },
                     },
                     methods:{
@@ -217,15 +220,15 @@ const select_com = {
                         },
                     }
                 });
+                select_com.data[dom_id]['dom']=dom;
                 //显示的值
                 select_com.data[dom_id]['name']=name;
                 select_com.data[dom_id]['select_value']=select_value;
                 select_com.data[dom_id]['select_text']=select_text;
                 select_com.data[dom_id]['item_html']=option_html;
             })
-
             //监听body点击事件 方便下拉框 隐藏
-            dom.addEventListener('click',e.body_click,false)
+            document.addEventListener('click',e.body_click,false)
         },
         //显示组件
         show:function(e){
@@ -289,28 +292,45 @@ const select_com = {
             }
             return result;
         },
+        //是否显示下拉列表框的滚动条
+        check_dropdown_scrollbar:function (ui_select,max_height=200){
+            let dom_id=$(ui_select).data('id');
+            setTimeout(function (){
+                let list_height=ui_select.find('.ui_select_list').height();
+                if(list_height>max_height){
+                    select_com.data[dom_id]['dropdown_scrollbar']=true;
+                }else{
+                    select_com.data[dom_id]['dropdown_scrollbar']=false;
+                }
+            }, 10)
+        },
         //显示组件
         show_click:function (e){
+            e.preventDefault();
+            e.stopPropagation();
             let ui_select=$(e.target).parents('.ui_select');
             let dom_id=ui_select.data('id');//得到对象id
             select_com.data[dom_id]['select_dropdown']=!select_com.data[dom_id]['select_dropdown'];
+            select_com.methods.check_dropdown_scrollbar(ui_select);
         },
+        //隐藏下拉菜单
         body_click:function (e){
-            let ui_select=$(e.target).parents('.ui_select');
-            let dom_id=ui_select.data('id');//得到对象id
-            select_com.data[dom_id]['select_dropdown']=!select_com.data[dom_id]['select_dropdown'];
-        }
+            for(let dom in select_com.data){
+                if(select_com.data[dom]['select_dropdown']==true)select_com.data[dom]['select_dropdown']=false;
+            }
+        },
         //输入事件
         input:function (e){
             let $this=$(e.target);
             let ui_select=$($this).parents('.ui_select');
             let dom_id=ui_select.data('id');//得到对象id
-
-            let select_list=ui_select.find('.ui_select_list');
             let select_list_item=ui_select.find('.ui_select_list .ui_select_item');
-            let scrollbar_box=ui_select.find('.ui_select_dropdown_scrollbar');
             let scrollbar_thumb=ui_select.find('.ui_select_dropdown_scrollbar .ui_select_dropdown_scrollbar_thumb');
 
+            //用户搜索输入时 打开菜单
+            if(select_com.data[dom_id]['select_dropdown']==false)select_com.data[dom_id]['select_dropdown']=true;
+
+            //子元素是否显示
             //用户搜索的值
             let search_value=select_com.data[dom_id]['select_text'].toLowerCase();//页面显示的值
             select_list_item.each(function(){
@@ -322,9 +342,12 @@ const select_com = {
                     $(this).hide();
                 }
             });
+
             //控制滚动条位置
             $(ui_select).find('.ui_select_dropdown')[0].scrollTop=0;
             scrollbar_thumb.css('top',0+'px');
+            //是否显示滚动条
+            select_com.methods.check_dropdown_scrollbar(ui_select);
         },
         //添加滚动事件处理
         scroll_handle:function(e){
@@ -335,16 +358,19 @@ const select_com = {
             let select_list_item=select_box.find('.ui_select_list .ui_select_item');
             let scrollbar_box=select_box.find('.ui_select_dropdown_scrollbar');
             let scrollbar_thumb=select_box.find('.ui_select_dropdown_scrollbar .ui_select_dropdown_scrollbar_thumb');
+
             let box_height=select_box.height();//容器高度
             let list_height=select_list.height();//列表高度
             let item_height=select_list_item.height();//元素高度
             let scrollbar_box_height=scrollbar_box.height();//滚动条容器高度
             let scrollbar_height=scrollbar_thumb.height();//滚动条高度
+
             if(e.wheelDelta<=0){
                 select_box[0].scrollTop+=item_height;
             }else {
                 select_box[0].scrollTop-=item_height;
             }
+
             let true_scroll_top=select_box[0].scrollTop/(list_height-box_height);//得到当前滚动占比
             let new_top=true_scroll_top*(scrollbar_box_height-scrollbar_height);
             scrollbar_thumb.css('top',new_top+'px');
