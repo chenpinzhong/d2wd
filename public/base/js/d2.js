@@ -119,6 +119,7 @@ const select_com = {
             'icon_search':false,
             'select_dropdown':false,//是否显示下拉菜单
             'dropdown_scrollbar':false,//滚动条是否显示
+            'scrollbar_height':200+'px',//滚动条高度
         },
     },
     //组件模板
@@ -154,7 +155,7 @@ const select_com = {
                                 <div class="ui_select_item">32222</div>\
                             </div>\
                             <!--滚动条部分-->\
-                            <div v-show="dropdown_scrollbar" class="ui_select_dropdown_scrollbar">\
+                            <div v-show="dropdown_scrollbar" :style="{height:scrollbar_height}" class="ui_select_dropdown_scrollbar">\
                                 <div class="ui_select_dropdown_scrollbar_thumb"></div>\
                             </div>\
                         </div>\
@@ -210,14 +211,9 @@ const select_com = {
                                 this.icon_down=true;
                                 this.icon_search=false;
                             }
-
                         },
                     },
                     methods:{
-                        //失去焦点 下拉框隐藏
-                        select_blur:function (name){
-                            //setTimeout(function(){select_com.data[dom_id]['select_dropdown']=false;},200);
-                        },
                     }
                 });
                 select_com.data[dom_id]['dom']=dom;
@@ -257,6 +253,9 @@ const select_com = {
                 let dom_scroll=document.querySelector('[data-id="'+dom_id+'"] .ui_select_dropdown')
                 if (dom_scroll.addEventListener)dom_scroll.addEventListener('DOMMouseScroll', e.scroll_handle, false);
                 dom_scroll.onmousewheel = e.scroll_handle;
+
+                 dom_scroll=document.querySelector('[data-id="'+dom_id+'"] .ui_select_dropdown')
+                onmousemove
             })
         },
         //子元素点击
@@ -268,15 +267,10 @@ const select_com = {
                 let ui_select_item=document.querySelectorAll('[data-id="'+dom_id+'"] .ui_select_dropdown .ui_select_list .ui_select_item')
                 ui_select_item.forEach(function(dom){
                     //滚动事件
-                    if (dom.addEventListener){
-                        dom.addEventListener('click',e.item_click,false)
-                    }else{
-                        console.log('select_com','无法绑定click事件')
-                    }
+                    if (dom.addEventListener)dom.addEventListener('click',e.item_click,false);
                 })
             })
         },
-
     },
     //移除绑定
     remove_bind: {
