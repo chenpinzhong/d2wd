@@ -119,7 +119,6 @@ const select_com = {
             'icon_search':false,
             'select_dropdown':false,//是否显示下拉菜单
             'dropdown_scrollbar':false,//滚动条是否显示
-            'scrollbar_height':200+'px',//滚动条高度
         },
     },
     //组件模板
@@ -146,7 +145,7 @@ const select_com = {
                     </div>\
                     <transition name="fade">\
                     <div v-show="select_dropdown" class="ui_select_dropdown">\
-                        <div style="position: relative;">\
+                        <div class="ui_select_dropdown_box">\
                             <!--选择列表部分-->\
                             <div class="ui_select_list">\
                                 <div class="ui_select_item">11111</div>\
@@ -155,7 +154,7 @@ const select_com = {
                                 <div class="ui_select_item">32222</div>\
                             </div>\
                             <!--滚动条部分-->\
-                            <div v-show="dropdown_scrollbar" :style="{height:scrollbar_height}" class="ui_select_dropdown_scrollbar">\
+                            <div v-show="dropdown_scrollbar"  class="ui_select_dropdown_scrollbar">\
                                 <div class="ui_select_dropdown_scrollbar_thumb"></div>\
                             </div>\
                         </div>\
@@ -250,12 +249,14 @@ const select_com = {
             let select = document.querySelectorAll(e.el);
             select.forEach(function(dom){
                 let dom_id=dom.id;
-                let dom_scroll=document.querySelector('[data-id="'+dom_id+'"] .ui_select_dropdown')
+                let dom_scroll=document.querySelector('[data-id="'+dom_id+'"] .ui_select_dropdown .ui_select_dropdown_box');
                 if (dom_scroll.addEventListener)dom_scroll.addEventListener('DOMMouseScroll', e.scroll_handle, false);
                 dom_scroll.onmousewheel = e.scroll_handle;
-
-                 dom_scroll=document.querySelector('[data-id="'+dom_id+'"] .ui_select_dropdown')
-                onmousemove
+                //滚动条
+                let scrollbar_thumb=document.querySelector('[data-id="'+dom_id+'"] .ui_select_dropdown .ui_select_dropdown_scrollbar_thumb');
+                scrollbar_thumb.addEventListener('onmousedown', e.scrollbar_onmousedown, false);//鼠标按钮被按下
+                scrollbar_thumb.addEventListener('onmousemove', e.scrollbar_onmousemove, false);//鼠标被移动
+                scrollbar_thumb.addEventListener('onmouseup', e.scrollbar_onmouseup, false);//鼠标按键被松开
             })
         },
         //子元素点击
@@ -347,6 +348,10 @@ const select_com = {
         scroll_handle:function(e){
             e.preventDefault();
             e.stopPropagation();
+            console.log(1111)
+
+
+            /*
             let select_box=$(e.target).parents('.ui_select_dropdown');
             let select_list=select_box.find('.ui_select_list');
             let select_list_item=select_box.find('.ui_select_list .ui_select_item');
@@ -367,7 +372,8 @@ const select_com = {
 
             let true_scroll_top=select_box[0].scrollTop/(list_height-box_height);//得到当前滚动占比
             let new_top=true_scroll_top*(scrollbar_box_height-scrollbar_height);
-            scrollbar_thumb.css('top',new_top+'px');
+            //scrollbar_thumb.css('top',new_top+'px');
+             */
             return false;
         },
         item_click:function (e){
@@ -383,5 +389,11 @@ const select_com = {
             //隐藏下拉框
             select_com.data[dom_id]['select_dropdown']=false;
         },
+        //鼠标按钮被按下
+        scrollbar_onmousedown:function (e){},
+        //鼠标被移动
+        scrollbar_onmousemove:function (e){},
+        //鼠标按键被松开
+        scrollbar_onmouseup:function (e){},
     },
 };
