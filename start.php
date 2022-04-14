@@ -12,7 +12,7 @@ use Dotenv\Dotenv;
 use support\Request;
 use support\Log;
 use support\Container;
-
+//设置错误级别 方便查看错误
 ini_set('display_errors', 'on');
 error_reporting(E_ALL);
 
@@ -24,13 +24,15 @@ if (class_exists('Dotenv\Dotenv') && file_exists(base_path().'/.env')) {
     }
 }
 
+//加载路由,控制器 排除['route', 'container']
 Config::load(config_path(), ['route', 'container']);
-
+//设置时区
 if ($timezone = config('app.default_timezone')) {
     date_default_timezone_set($timezone);
 }
-
+//主机重新加载时
 Worker::$onMasterReload = function (){
+    //缓存机制
     if (function_exists('opcache_get_status') && $status = opcache_get_status()) {
         if (isset($status['scripts']) && $scripts = $status['scripts']) {
             foreach (array_keys($scripts) as $file) {
@@ -47,20 +49,15 @@ Worker::$logFile                      = $config['log_file'];
 TcpConnection::$defaultMaxPackageSize = $config['max_package_size'] ?? 10*1024*1024;
 
 $worker = new Worker($config['listen'], $config['context']);
-$property_map = [
-    'name',
-    'count',
-    'user',
-    'group',
-    'reusePort',
-    'transport',
-];
+
+//绑定变量到工作环境中
+$property_map = ['name','count','user','group','reusePort','transport',];
 foreach ($property_map as $property) {
     if (isset($config[$property])) {
         $worker->$property = $config[$property];
     }
 }
-#启动
+#启动服务
 $worker->onWorkerStart = function ($worker) {
     require_once base_path() . '/support/bootstrap.php';
     $app = new App($worker, Container::instance(), Log::channel('default'), app_path(), public_path());
@@ -79,15 +76,8 @@ $worker->onWorkerStart = function ($worker) {
 if (\DIRECTORY_SEPARATOR === '/') {
     foreach (config('process', []) as $process_name => $config) {
         $worker = new Worker($config['listen'] ?? null, $config['context'] ?? []);
-        $property_map = [
-            'count',
-            'user',
-            'group',
-            'reloadable',
-            'reusePort',
-            'transport',
-            'protocol',
-        ];
+        //绑定变量到工作环境中
+        $property_map = ['count','user','group','reloadable','reusePort','transport','protocol',];
         $worker->name = $process_name;
         foreach ($property_map as $property) {
             if (isset($config[$property])) {
@@ -116,7 +106,6 @@ if (\DIRECTORY_SEPARATOR === '/') {
                     echo "process error: class {$config['handler']} not exists\r\n";
                     return;
                 }
-
                 $instance = Container::make($config['handler'], $config['constructor'] ?? []);
                 worker_bind($worker, $instance);
             }
@@ -124,5 +113,5 @@ if (\DIRECTORY_SEPARATOR === '/') {
         };
     }
 }
-
+//运行服务
 Worker::runAll();
