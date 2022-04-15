@@ -119,6 +119,8 @@ const select_com = {
             'icon_search':false,
             'select_dropdown':false,//是否显示下拉菜单
             'dropdown_scrollbar':false,//滚动条是否显示
+            'scrollbar_thumb_top':0,
+            'px':'px',
         },
     },
     //组件模板
@@ -156,7 +158,7 @@ const select_com = {
                         </div>\
                         <!--滚动条部分-->\
                         <div v-show="dropdown_scrollbar"  class="ui_select_dropdown_scrollbar">\
-                            <div class="ui_select_dropdown_scrollbar_thumb"></div>\
+                            <div class="ui_select_dropdown_scrollbar_thumb" v-bind:style="{top:scrollbar_thumb_top+px}"></div>\
                         </div>\
                     </div>\
                     </transition>\
@@ -223,7 +225,7 @@ const select_com = {
                 select_com.data[dom_id]['item_html']=option_html;
             })
             //监听body点击事件 方便下拉框 隐藏
-            document.addEventListener('click',e.body_click,false)
+            document.addEventListener('click',e.body_click,false);
         },
         //显示组件
         show:function(e){
@@ -254,9 +256,14 @@ const select_com = {
                 dom_scroll.onmousewheel = e.scroll_handle;
                 //滚动条
                 let scrollbar_thumb=document.querySelector('[data-id="'+dom_id+'"] .ui_select_dropdown .ui_select_dropdown_scrollbar_thumb');
-                scrollbar_thumb.addEventListener('onmousedown', e.scrollbar_onmousedown, false);//鼠标按钮被按下
-                scrollbar_thumb.addEventListener('onmousemove', e.scrollbar_onmousemove, false);//鼠标被移动
-                scrollbar_thumb.addEventListener('onmouseup', e.scrollbar_onmouseup, false);//鼠标按键被松开
+                // 当鼠标按下时, 添加鼠标移动监听
+                scrollbar_thumb.addEventListener("mousedown", function (){
+                    scrollbar_thumb.addEventListener("mousemove", e.scrollbar_onmousemove)
+                })
+                // 添加鼠标弹起监听 , 即鼠标不在按下
+                document.addEventListener("mouseup", function (){
+                    scrollbar_thumb.removeEventListener("mousemove", e.scrollbar_onmousemove);
+                })
             })
         },
         //子元素点击
@@ -265,7 +272,7 @@ const select_com = {
             let select = document.querySelectorAll(e.el);
             select.forEach(function(dom){
                 let dom_id=dom.id;
-                let ui_select_item=document.querySelectorAll('[data-id="'+dom_id+'"] .ui_select_dropdown .ui_select_list .ui_select_item')
+                let ui_select_item=document.querySelectorAll('[data-id="'+dom_id+'"] .ui_select_dropdown .ui_select_list .ui_select_item');
                 ui_select_item.forEach(function(dom){
                     //滚动事件
                     if (dom.addEventListener)dom.addEventListener('click',e.item_click,false);
@@ -310,8 +317,12 @@ const select_com = {
         },
         //隐藏下拉菜单
         body_click:function (e){
-            for(let dom in select_com.data){
-                if(select_com.data[dom]['select_dropdown']==true)select_com.data[dom]['select_dropdown']=false;
+            let select_dropdown=$(e.target).parents('.ui_select_dropdown');
+            //滚动条的点击事件不触发
+            if(select_dropdown.length==0) {
+                for (let dom in select_com.data) {
+                    if (select_com.data[dom]['select_dropdown'] == true) select_com.data[dom]['select_dropdown'] = false;
+                }
             }
         },
         //输入事件
@@ -348,34 +359,31 @@ const select_com = {
         scroll_handle:function(e){
             e.preventDefault();
             e.stopPropagation();
+
+            let ui_select=$(e.target).parents('.ui_select');
+            let dom_id=ui_select.data('id');//得到对象id
+
             let select_box=$(e.target).parents('.ui_select_dropdown');
             let list_height=select_box.find('.ui_select_list').height();//元素列表高度
             let item_height=select_box.find('.ui_select_list .ui_select_item').height();//元素高度
             //真实滚动条 不可见
             let real_scrollbar=select_box.find('.ui_select_dropdown_box')[0];//真实滚动条
             let real_scrollbar_height=select_box.find('.ui_select_dropdown_box').height();//真实滚动高度
-            //虚拟滚动条 看见
+            //可视滚动条 可见
             let scrollbar_height=select_box.find('.ui_select_dropdown_scrollbar').height();//滚动高度
-            let scrollbar_thumb_height=select_box.find('.ui_select_dropdown_scrollbar .ui_select_dropdown_scrollbar_thumb').height();//滚动条高度
+            let show_scrollbar_thumb=select_box.find('.ui_select_dropdown_scrollbar .ui_select_dropdown_scrollbar_thumb');
+            let scrollbar_thumb_height=show_scrollbar_thumb.height();//滚动条高度
 
-            //控制真实的滚动条
+            //计算虚拟的滚动条高度
             if(e.wheelDelta<=0){
                 real_scrollbar.scrollTop+=item_height;
             }else {
                 real_scrollbar.scrollTop-=item_height;
             }
-            //计算虚拟的滚动条高度
-            console.log(real_scrollbar_height,list_height,scrollbar_height,item_height,real_scrollbar.scrollTop)
-
-
-
-
-
-
-
-            //let true_scroll_top=select_box[0].scrollTop/(list_height-box_height);//得到当前滚动占比
-            //let new_top=true_scroll_top*(scrollbar_box_height-scrollbar_height);
-            //scrollbar_thumb.css('top',new_top+'px');
+            let temp_height=list_height-real_scrollbar_height;//真实可滚动高度
+            let temp_height2=scrollbar_height-scrollbar_thumb_height;//ui可滚动高度
+            let scroll_scale=real_scrollbar.scrollTop/temp_height;
+            select_com.data[dom_id]['scrollbar_thumb_top']=temp_height2*scroll_scale
             return false;
         },
         item_click:function (e){
@@ -391,11 +399,12 @@ const select_com = {
             //隐藏下拉框
             select_com.data[dom_id]['select_dropdown']=false;
         },
-        //鼠标按钮被按下
-        scrollbar_onmousedown:function (e){},
         //鼠标被移动
-        scrollbar_onmousemove:function (e){},
-        //鼠标按键被松开
-        scrollbar_onmouseup:function (e){},
+        scrollbar_onmousemove:function (e){
+            let $this=$(e.target);
+            let ui_select=$($this).parents('.ui_select');
+            let dom_id=ui_select.data('id');//得到对象id
+            select_com.data[dom_id]['scrollbar_thumb_top']+=e.movementY;
+        },
     },
 };
