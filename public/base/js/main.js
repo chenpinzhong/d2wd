@@ -59,16 +59,16 @@ let main={
         let path_name=location.pathname;//得到路径名称
         if(path_name.split('/').length<=2)return false;
         //得到分组
-        let item_group_list=document.querySelectorAll(".main_menu>.ui_menu_item_group>li.ui_menu_item_group");
+        let item_group_list=document.querySelectorAll(".main_menu>.menu_item_group>li.menu_item_group");
         let _this=this;
         item_group_list.forEach(function (item_group){
-            let menu_item_list=item_group.querySelectorAll("ul.ui_menu_item_group .ui_menu_item");
+            let menu_item_list=item_group.querySelectorAll("ul.menu_item_group .menu_item");
             menu_item_list.forEach(function (link){
-                let temp_href=link.querySelector('.ui_menu_title_content a').href;
-                if(main.is_class(link,'ui_menu_item_selected')){
-                    if(temp_href.indexOf(path_name)<=0)link.classList.remove('ui_menu_item_selected');
+                let temp_href=link.querySelector('.menu_title_content a').href;
+                if(main.is_class(link,'menu_item_selected')){
+                    if(temp_href.indexOf(path_name)<=0)link.classList.remove('menu_item_selected');
                 }else{
-                    if(temp_href.indexOf(path_name)>=0)link.classList.add('ui_menu_item_selected');
+                    if(temp_href.indexOf(path_name)>=0)link.classList.add('menu_item_selected');
                 }
             })
         })

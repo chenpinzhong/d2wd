@@ -81,22 +81,22 @@ const button_com = {
         //按钮点击事件
         click_animation_start: function (e) {
             let target = e.currentTarget;//得到当前元素
-            if (typeof (target.attributes['ui_btn_click']) == "undefined") {
-                target.setAttribute('ui_btn_click', "false")
+            if (typeof (target.attributes['btn_click']) == "undefined") {
+                target.setAttribute('btn_click', "false")
             }
-            if (target.attributes['ui_btn_click']['value'] == "true") {
-                target.attributes['ui_btn_click']['value'] = "false"
+            if (target.attributes['btn_click']['value'] == "true") {
+                target.attributes['btn_click']['value'] = "false"
             } else {
-                target.attributes['ui_btn_click']['value'] = "true"
+                target.attributes['btn_click']['value'] = "true"
             }
         },
         //按钮动画播放结束
         click_animation_end: function (e) {
             let target = e.currentTarget;//得到当前元素
-            if (typeof (target.attributes['ui_btn_click']) == "undefined") {
-                target.setAttribute('ui_btn_click', "false")
+            if (typeof (target.attributes['btn_click']) == "undefined") {
+                target.setAttribute('btn_click', "false")
             }
-            target.setAttribute('ui_btn_click', "false")
+            target.setAttribute('btn_click', "false")
         }
     },
 };
@@ -124,21 +124,21 @@ const select_com = {
         },
     },
     //组件模板
-    template:'<div class="ui_select" >\
-                    <div class="ui_select_selector">\
-                        <span class="ui_select_selection_search">\
+    template:'<div class="select" >\
+                    <div class="select_selector">\
+                        <span class="select_selection_search">\
                             <!--真实数据提交区域-->\
                             <input autocomplete="off" type="hidden" v-bind:name="name" v-model="select_value">\
                             <!--选择数据显示区域-->\
-                            <input autocomplete="off" type="text" class="ui_select_selection_search_input"  role="combobox" v-model="select_text">\
+                            <input autocomplete="off" type="text" class="select_selection_search_input"  role="combobox" v-model="select_text">\
                         </span>\
-                        <div class="ui_select_arrow"   style="user-select: none;">\
-                            <span v-show="icon_down"  role="img" aria-label="down" class="ui_icon icon_down">\
+                        <div class="select_arrow"   style="user-select: none;">\
+                            <span v-show="icon_down"  role="img" aria-label="down" class="icon icon_down">\
                                 <svg viewBox="64 64 896 896" focusable="false" data-icon="down" width="14px" height="14px" fill="currentColor">\
                                     <path d="M884 256h-75c-5.1 0-9.9 2.5-12.9 6.6L512 654.2 227.9 262.6c-3-4.1-7.8-6.6-12.9-6.6h-75c-6.5 0-10.3 7.4-6.5 12.7l352.6 486.1c12.8 17.6 39 17.6 51.7 0l352.6-486.1c3.9-5.3.1-12.7-6.4-12.7z"></path>\
                                 </svg>\
                             </span>\
-                            <span v-show="icon_search" role="img" aria-label="search" class="ui_icon icon_search">\
+                            <span v-show="icon_search" role="img" aria-label="search" class="icon icon_search">\
                                 <svg viewBox="64 64 896 896" focusable="false" data-icon="search" width="14px" height="14px" fill="currentColor">\
                                     <path d="M909.6 854.5L649.9 594.8C690.2 542.7 712 479 712 412c0-80.2-31.3-155.4-87.9-212.1-56.6-56.7-132-87.9-212.1-87.9s-155.5 31.3-212.1 87.9C143.2 256.5 112 331.8 112 412c0 80.1 31.3 155.5 87.9 212.1C256.5 680.8 331.8 712 412 712c67 0 130.6-21.8 182.7-62l259.7 259.6a8.2 8.2 0 0011.6 0l43.6-43.5a8.2 8.2 0 000-11.6zM570.4 570.4C528 612.7 471.8 636 412 636s-116-23.3-158.4-65.6C211.3 528 188 471.8 188 412s23.3-116.1 65.6-158.4C296 211.3 352.2 188 412 188s116.1 23.2 158.4 65.6S636 352.2 636 412s-23.3 116.1-65.6 158.4z"></path>\
                                 </svg>\
@@ -146,19 +146,19 @@ const select_com = {
                         </div>\
                     </div>\
                     <transition name="fade">\
-                    <div v-show="select_dropdown" class="ui_select_dropdown">\
-                        <div class="ui_select_dropdown_box">\
+                    <div v-show="select_dropdown" class="select_dropdown">\
+                        <div class="select_dropdown_box">\
                             <!--选择列表部分-->\
-                            <div class="ui_select_list">\
-                                <div class="ui_select_item">11111</div>\
+                            <div class="select_list">\
+                                <div class="select_item">11111</div>\
                                 <!--disabled 禁止选择-->\
-                                <div class="ui_select_item disabled">22222</div>\
-                                <div class="ui_select_item">32222</div>\
+                                <div class="select_item disabled">22222</div>\
+                                <div class="select_item">32222</div>\
                             </div>\
                         </div>\
                         <!--滚动条部分-->\
-                        <div v-show="dropdown_scrollbar"  class="ui_select_dropdown_scrollbar">\
-                            <div class="ui_select_dropdown_scrollbar_thumb" v-bind:style="{top:scrollbar_thumb_top+px}"></div>\
+                        <div v-show="dropdown_scrollbar"  class="select_dropdown_scrollbar">\
+                            <div class="select_dropdown_scrollbar_thumb" v-bind:style="{top:scrollbar_thumb_top+px}"></div>\
                         </div>\
                     </div>\
                     </transition>\
@@ -191,9 +191,9 @@ const select_com = {
                         select_value=item.value
                         select_text=item.text
                     }
-                    option_html+='<div class="ui_select_item" data-value="'+item.value+'">'+item.text+'</div>';
+                    option_html+='<div class="select_item" data-value="'+item.value+'">'+item.text+'</div>';
                 });
-                template.find('.ui_select_list').html(option_html);
+                template.find('.select_list').html(option_html);
                 $(dom).after(template);
 
                 ////////////////////////////////////////////////////
@@ -232,7 +232,7 @@ const select_com = {
             let select = document.querySelectorAll(e.el);
             select.forEach(function(dom){
                 let dom_id=dom.id;
-                let dom_scroll=document.querySelector('[data-id="'+dom_id+'"] .ui_select_selector');
+                let dom_scroll=document.querySelector('[data-id="'+dom_id+'"] .select_selector');
                 dom_scroll.addEventListener('click', e.show_click, false);
             })
         },
@@ -241,7 +241,7 @@ const select_com = {
             let select = document.querySelectorAll(e.el);
             select.forEach(function(dom){
                 let dom_id=dom.id;
-                let dom_scroll=document.querySelector('[data-id="'+dom_id+'"] .ui_select_selector');
+                let dom_scroll=document.querySelector('[data-id="'+dom_id+'"] .select_selector');
                 dom_scroll.addEventListener('input', e.input, false);
             })
         },
@@ -251,18 +251,18 @@ const select_com = {
             let select = document.querySelectorAll(e.el);
             select.forEach(function(dom){
                 let dom_id=dom.id;
-                let dom_scroll=document.querySelector('[data-id="'+dom_id+'"] .ui_select_dropdown .ui_select_dropdown_box');
+                let dom_scroll=document.querySelector('[data-id="'+dom_id+'"] .select_dropdown .select_dropdown_box');
                 if (dom_scroll.addEventListener)dom_scroll.addEventListener('DOMMouseScroll', e.scroll_handle, false);
                 dom_scroll.onmousewheel = e.scroll_handle;
                 //滚动条
-                let scrollbar_thumb=document.querySelector('[data-id="'+dom_id+'"] .ui_select_dropdown .ui_select_dropdown_scrollbar_thumb');
+                let scrollbar_thumb=document.querySelector('[data-id="'+dom_id+'"] .select_dropdown .select_dropdown_scrollbar_thumb');
                 // 当鼠标按下时, 添加鼠标移动监听
                 scrollbar_thumb.addEventListener("mousedown", function (){
                     scrollbar_thumb.addEventListener("mousemove", e.scrollbar_onmousemove)
                 })
                 // 添加鼠标弹起监听 , 即鼠标不在按下
                 document.addEventListener("mouseup", function (){
-                    scrollbar_thumb.removeEventListener("mousemove", e.scrollbar_onmousemove);
+                    //scrollbar_thumb.removeEventListener("mousemove", e.scrollbar_onmousemove);
                 })
             })
         },
@@ -272,8 +272,8 @@ const select_com = {
             let select = document.querySelectorAll(e.el);
             select.forEach(function(dom){
                 let dom_id=dom.id;
-                let ui_select_item=document.querySelectorAll('[data-id="'+dom_id+'"] .ui_select_dropdown .ui_select_list .ui_select_item');
-                ui_select_item.forEach(function(dom){
+                let select_item=document.querySelectorAll('[data-id="'+dom_id+'"] .select_dropdown .select_list .select_item');
+                select_item.forEach(function(dom){
                     //滚动事件
                     if (dom.addEventListener)dom.addEventListener('click',e.item_click,false);
                 })
@@ -295,10 +295,10 @@ const select_com = {
             return result;
         },
         //是否显示下拉列表框的滚动条
-        check_dropdown_scrollbar:function (ui_select,max_height=200){
-            let dom_id=$(ui_select).data('id');
+        check_dropdown_scrollbar:function (select,max_height=200){
+            let dom_id=$(select).data('id');
             setTimeout(function (){
-                let list_height=ui_select.find('.ui_select_list').height();
+                let list_height=select.find('.select_list').height();
                 if(list_height>max_height){
                     select_com.data[dom_id]['dropdown_scrollbar']=true;
                 }else{
@@ -310,14 +310,14 @@ const select_com = {
         show_click:function (e){
             e.preventDefault();
             e.stopPropagation();
-            let ui_select=$(e.target).parents('.ui_select');
-            let dom_id=ui_select.data('id');//得到对象id
+            let select=$(e.target).parents('.select');
+            let dom_id=select.data('id');//得到对象id
             select_com.data[dom_id]['select_dropdown']=!select_com.data[dom_id]['select_dropdown'];
-            select_com.methods.check_dropdown_scrollbar(ui_select);
+            select_com.methods.check_dropdown_scrollbar(select);
         },
         //隐藏下拉菜单
         body_click:function (e){
-            let select_dropdown=$(e.target).parents('.ui_select_dropdown');
+            let select_dropdown=$(e.target).parents('.select_dropdown');
             //滚动条的点击事件不触发
             if(select_dropdown.length==0) {
                 for (let dom in select_com.data) {
@@ -328,10 +328,10 @@ const select_com = {
         //输入事件
         input:function (e){
             let $this=$(e.target);
-            let ui_select=$($this).parents('.ui_select');
-            let dom_id=ui_select.data('id');//得到对象id
-            let select_list_item=ui_select.find('.ui_select_list .ui_select_item');
-            let scrollbar_thumb=ui_select.find('.ui_select_dropdown_scrollbar .ui_select_dropdown_scrollbar_thumb');
+            let select=$($this).parents('.select');
+            let dom_id=select.data('id');//得到对象id
+            let select_list_item=select.find('.select_list .select_item');
+            let scrollbar_thumb=select.find('.select_dropdown_scrollbar .select_dropdown_scrollbar_thumb');
 
             //用户搜索输入时 打开菜单
             if(select_com.data[dom_id]['select_dropdown']==false)select_com.data[dom_id]['select_dropdown']=true;
@@ -350,28 +350,28 @@ const select_com = {
             });
 
             //控制滚动条位置
-            $(ui_select).find('.ui_select_dropdown')[0].scrollTop=0;
+            $(select).find('.select_dropdown')[0].scrollTop=0;
             scrollbar_thumb.css('top',0+'px');
             //是否显示滚动条
-            select_com.methods.check_dropdown_scrollbar(ui_select);
+            select_com.methods.check_dropdown_scrollbar(select);
         },
         //添加滚动事件处理
         scroll_handle:function(e){
             e.preventDefault();
             e.stopPropagation();
 
-            let ui_select=$(e.target).parents('.ui_select');
-            let dom_id=ui_select.data('id');//得到对象id
+            let select=$(e.target).parents('.select');
+            let dom_id=select.data('id');//得到对象id
 
-            let select_box=$(e.target).parents('.ui_select_dropdown');
-            let list_height=select_box.find('.ui_select_list').height();//元素列表高度
-            let item_height=select_box.find('.ui_select_list .ui_select_item').height();//元素高度
+            let select_box=$(e.target).parents('.select_dropdown');
+            let list_height=select_box.find('.select_list').height();//元素列表高度
+            let item_height=select_box.find('.select_list .select_item').height();//元素高度
             //真实滚动条 不可见
-            let real_scrollbar=select_box.find('.ui_select_dropdown_box')[0];//真实滚动条
-            let real_scrollbar_height=select_box.find('.ui_select_dropdown_box').height();//真实滚动高度
+            let real_scrollbar=select_box.find('.select_dropdown_box')[0];//真实滚动条
+            let real_scrollbar_height=select_box.find('.select_dropdown_box').height();//真实滚动高度
             //可视滚动条 可见
-            let scrollbar_height=select_box.find('.ui_select_dropdown_scrollbar').height();//滚动高度
-            let show_scrollbar_thumb=select_box.find('.ui_select_dropdown_scrollbar .ui_select_dropdown_scrollbar_thumb');
+            let scrollbar_height=select_box.find('.select_dropdown_scrollbar').height();//滚动高度
+            let show_scrollbar_thumb=select_box.find('.select_dropdown_scrollbar .select_dropdown_scrollbar_thumb');
             let scrollbar_thumb_height=show_scrollbar_thumb.height();//滚动条高度
 
             //计算虚拟的滚动条高度
@@ -388,8 +388,8 @@ const select_com = {
         },
         item_click:function (e){
             let $this=$(e.target);
-            let ui_select=$($this).parents('.ui_select');
-            let dom_id=ui_select.data('id');//得到对象id
+            let select=$($this).parents('.select');
+            let dom_id=select.data('id');//得到对象id
             //真实的值
             let value=$this.data('value');
             let text=$this.text();
@@ -401,9 +401,10 @@ const select_com = {
         },
         //鼠标被移动
         scrollbar_onmousemove:function (e){
+            console.log(e)
             let $this=$(e.target);
-            let ui_select=$($this).parents('.ui_select');
-            let dom_id=ui_select.data('id');//得到对象id
+            let select=$($this).parents('.select');
+            let dom_id=select.data('id');//得到对象id
             select_com.data[dom_id]['scrollbar_thumb_top']+=e.movementY;
         },
     },

@@ -32,11 +32,11 @@
             background-color: #f7f7f7;
         }
 
-        [id^="button_demo_basic"] .ui_btn {
+        [id^="button_demo_basic"] .btn {
             margin-right: 8px;
             margin-bottom: 12px;
         }
-        [id^="button_demo_basic"] .ui_btn_rtl {
+        [id^="button_demo_basic"] .btn_rtl {
             margin-right: 0;
             margin-left: 8px;
         }
@@ -91,25 +91,25 @@
                         </h2>
                         <section class="code_box" id="button_demo_basic" data-scrollama-index="2">
                             <section class="code_box_demo">
-                                <button type="button" class="ui_btn ui_btn_primary"><span>基础按钮</span></button>
-                                <button type="button" class="ui_btn"><span>默认按钮</span></button>
-                                <button type="button" class="ui_btn ui_btn_dashed"><span>虚线按钮</span></button>
+                                <button type="button" class="btn btn_primary"><span>基础按钮</span></button>
+                                <button type="button" class="btn"><span>默认按钮</span></button>
+                                <button type="button" class="btn btn_dashed"><span>虚线按钮</span></button>
                                 <br/>
-                                <button type="button" class="ui_btn ui_btn_text" ><span>文本按钮</span></button>
-                                <button type="button" class="ui_btn ui_btn_link"><span>连接按钮</span></button>
+                                <button type="button" class="btn btn_text" ><span>文本按钮</span></button>
+                                <button type="button" class="btn btn_link"><span>连接按钮</span></button>
                                 <div class="code_container">
                                     <div class="title">简单使用组件</div>
                                     <div class="lable">HTML</div>
                                     <textarea type="code" data-mode="text/html">
-<button type="button" class="ui_btn ui_btn_primary"><span>基础按钮</span></button>
-<button type="button" class="ui_btn"><span>默认按钮</span></button>
-<button type="button" class="ui_btn ui_btn_dashed"><span>虚线按钮</span></button>
+<button type="button" class="btn btn_primary"><span>基础按钮</span></button>
+<button type="button" class="btn"><span>默认按钮</span></button>
+<button type="button" class="btn btn_dashed"><span>虚线按钮</span></button>
 <br/>
-<button type="button" class="ui_btn ui_btn_text" ><span>文本按钮</span></button>
-<button type="button" class="ui_btn ui_btn_link"><span>连接按钮</span></button></textarea>
+<button type="button" class="btn btn_text" ><span>文本按钮</span></button>
+<button type="button" class="btn btn_link"><span>连接按钮</span></button></textarea>
                                     <div class="lable">JavaScript</div>
                                     <textarea type="code" data-mode="text/javascript">
-button_com.el='button.ui_btn';//按钮组件的选择器
+button_com.el='button.btn';//按钮组件的选择器
 //定义的click事件
 button_com.click=function (e){
     console.log('触发click事件');
@@ -205,22 +205,22 @@ const button_com = {
         //按钮点击事件
         click_animation_start: function (e) {
             let target = e.currentTarget;//得到当前元素
-            if (typeof (target.attributes['ui_btn_click']) == "undefined") {
-                target.setAttribute('ui_btn_click', "false")
+            if (typeof (target.attributes['btn_click']) == "undefined") {
+                target.setAttribute('btn_click', "false")
             }
-            if (target.attributes['ui_btn_click']['value'] == "true") {
-                target.attributes['ui_btn_click']['value'] = "false"
+            if (target.attributes['btn_click']['value'] == "true") {
+                target.attributes['btn_click']['value'] = "false"
             } else {
-                target.attributes['ui_btn_click']['value'] = "true"
+                target.attributes['btn_click']['value'] = "true"
             }
         },
         //按钮动画播放结束
         click_animation_end: function (e) {
             let target = e.currentTarget;//得到当前元素
-            if (typeof (target.attributes['ui_btn_click']) == "undefined") {
-                target.setAttribute('ui_btn_click', "false")
+            if (typeof (target.attributes['btn_click']) == "undefined") {
+                target.setAttribute('btn_click', "false")
             }
-            target.setAttribute('ui_btn_click', "false")
+            target.setAttribute('btn_click', "false")
         }
     },
 };</textarea>
@@ -234,7 +234,7 @@ const button_com = {
     </div>
 </body>
 <script type="module">
-    button_com.el='button.ui_btn';//按钮组件的选择器
+    button_com.el='button.btn';//按钮组件的选择器
     //定义的click事件
     button_com.click=function (e){
         console.log('触发click事件')

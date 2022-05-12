@@ -19,7 +19,7 @@
         .fade-enter, .fade-leave-to{
             opacity: 0;
         }
-        .ui_select {
+        .select {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
@@ -30,7 +30,7 @@
             display: inline-block;
             cursor: pointer;
         }
-        .ui_select .ui_select_selector {
+        .select .select_selector {
             width: 100%;
             height: 32px;
             padding: 0 11px;
@@ -41,10 +41,10 @@
             transition: all .3s cubic-bezier(.645,.045,.355,1);
             display: flex;
         }
-        .ui_select .ui_select_selector .ui_select_selection_search{
+        .select .select_selector .select_selection_search{
             flex: 1;
         }
-        .ui_select_selection_search_input{
+        .select_selection_search_input{
             margin: 0;
             padding: 0;
             background: 0 0;
@@ -55,10 +55,10 @@
             width: auto;
             max-width: 120px;
         }
-        .ui_select_arrow{
+        .select_arrow{
             padding: 8px 0;
         }
-        .ui_select_dropdown {
+        .select_dropdown {
             margin: 0;
             color: #000000d9;
             list-style: none;
@@ -75,17 +75,17 @@
             width: 100%;
             box-shadow: 0 3px 6px -4px #0000001f,0 6px 16px #00000014,0 9px 28px 8px #0000000d;
         }
-        .ui_select_dropdown .ui_select_dropdown_box{
+        .select_dropdown .select_dropdown_box{
             max-height: 200px;
             overflow: hidden;
             position:relative;
             padding: 4px 0;
         }
 
-        .ui_select_dropdown .ui_select_list{
+        .select_dropdown .select_list{
             position: relative;
         }
-        .ui_select_dropdown .ui_select_item {
+        .select_dropdown .select_item {
             display: block;
             min-height: 32px;
             padding: 5px 12px;
@@ -96,24 +96,24 @@
             cursor: pointer;
             transition: background .3s ease
         }
-        .ui_select_dropdown .ui_select_item:hover {
+        .select_dropdown .select_item:hover {
             background-color: #f5f5f5;
         }
-        .ui_select_dropdown .ui_select_item.disabled {
+        .select_dropdown .select_item.disabled {
             color: #999;
         }
-        .ui_select_dropdown .ui_select_item.disabled:hover {
+        .select_dropdown .select_item.disabled:hover {
             color: #999;
         }
 
-        .ui_select_dropdown_scrollbar{
+        .select_dropdown_scrollbar{
             width: 8px;
             bottom: 0px;
             right: 0px;
             top: 0px;
             position: absolute;
         }
-        .ui_select_dropdown_scrollbar .ui_select_dropdown_scrollbar_thumb {
+        .select_dropdown_scrollbar .select_dropdown_scrollbar_thumb {
             width: 100%;
             height: 60px;
             top: 0px;
